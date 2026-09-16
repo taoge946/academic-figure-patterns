@@ -52,11 +52,12 @@ for k, (irow, c, cd, lab) in enumerate([(1, ORANGE, ORANGE_D, "8 shots"), (5, BL
     ax.set_xticks([0, .5, 1]); ax.set_xticklabels(["0", "0.5", "1"] if k == 1 else [])
     note(ax, .02, .72, lab, size=7.5, color=cd); finish(ax)
     zero = overlap[np.argmin(np.abs(true[irow]))]
-    ax.axvline(zero, color=cd, lw=.7, ls=":"); note(ax, zero + .02, -.22, f"crossing ≈ {zero:.2f}", size=7, color=INK2)
+    ax.axvline(zero, color=cd, lw=.7, ls=":"); note(ax, zero + .02, -.22, "crossing", size=7, color=INK2)
     if k == 1:
         ax.set_xlabel("fraction of borrowed settings", labelpad=2)
     if k == 0:
         ax.set_ylabel(r"$\Delta W$  ($10^{-2}$)", labelpad=2)
 fig.text(.015, .93, "(a)", fontsize=11, fontweight="bold", color=INK); letter(fig, fig.axes[-2], "b", dx=-.07); letter(fig, fig.axes[-1], "c", dx=-.07)
+np.savez("examples/data/12e.npz", overlap_fraction=overlap, shots_per_setting=budget, measured=meas, model=true)
 fig.savefig("examples/figures/12e_after.png", dpi=220); fig.savefig("examples/figures/12e_after.pdf")
 print("saved examples/figures/12e_after.{png,pdf}")

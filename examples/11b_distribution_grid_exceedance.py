@@ -14,6 +14,7 @@ from afp.evidence import (evidence_style, finish, letter, note, peak_normalized_
 
 rng = np.random.default_rng(3)
 evidence_style()
+DATA = {}
 COHORTS = [("cohort A, development", 1600), ("cohort B, sealed", 1600), ("cohort C, sealed", 1000)]
 CONDS = [("condition 1", 1.0), ("condition 2", 1.5), ("control (matched)", 0.18)]
 sd_P, sd_Q = 0.040, 0.013
@@ -28,20 +29,18 @@ for j, (name, n) in enumerate(COHORTS):
         ax = fig.add_axes([x0s[ci], y0s[j], w[ci], h]); axes[(ci, j)] = ax
         sP = rng.standard_t(4, n) * sd_P * f * scale * 0.8 + (0.01 * f if f > .5 else 0)
         sQ = rng.normal(0, sd_Q * (f if f < .5 else 1.0) * scale, n)
+        DATA[f"shift_P_cohort{j}_cond{ci}"] = sP; DATA[f"shift_Q_cohort{j}_cond{ci}"] = sQ
         peak_normalized_hist(ax, sP, edges, BLUE, edge_color=BLUE_D)
         peak_normalized_hist(ax, sQ, edges, GREEN, edge_color=GREEN_D)
         ax.axvline(0, color=INK, lw=.6, zorder=1)
         ax.set_xlim(edges[0], edges[-1])
         ax.set_xticks([-.2, -.1, 0, .1, .2]); ax.set_xticklabels(["−0.2", "−0.1", "0", "0.1", "0.2"] if j == 2 else [])
         finish(ax)
-        note(ax, edges[-1] - .004, .80, f"{np.mean(sP ** 2) * 1e3:.2f}", ha="right", size=8.5, color=BLUE_D)
-        note(ax, edges[-1] - .004, .50, f"{np.mean(sQ ** 2) * 1e3:.2f}", ha="right", size=8.5, color=GREEN_D)
         if ci == 0:
             note(ax, edges[0], 1.27, f"{name}  ·  {n:,} rows", va="top", size=8, color=INK)
         if j == 0:
             ax.set_title(cname, pad=5, fontsize=9)
 axes[(1, 2)].set_xlabel(r"learner shift per row,  $\delta f = f_{\rm cond} - f_{\rm clean}$", labelpad=2)
-note(axes[(0, 0)], edges[-1] - .004, .90, r"$\langle\delta f^2\rangle$  ($10^{-3}$)", ha="right", va="bottom", size=8, color=INK2)
 
 # (d) exceedance of the clean residual
 xs = np.linspace(0, 0.3, 301)
@@ -50,6 +49,7 @@ for j, (name, n) in enumerate(COHORTS):
     rP = np.abs(rng.standard_t(3, n) * 0.035 * [1, 1, 1.3][j])
     rQ = np.abs(rng.normal(0, 0.045, n))
     rM = np.abs(rng.standard_t(3, n) * 0.048 * [1, 1, 1.3][j])
+    DATA[f"clean_absres_P_cohort{j}"] = rP; DATA[f"clean_absres_Q_cohort{j}"] = rQ; DATA[f"clean_absres_mean_cohort{j}"] = rM
     exceedance_curve(ax, rM, GREY_D, xs=xs, lw=.9, ls=(0, (2, 1.5)))
     exceedance_curve(ax, rP, BLUE_D, xs=xs)
     exceedance_curve(ax, rQ, GREEN_D, xs=xs)
@@ -58,11 +58,8 @@ for j, (name, n) in enumerate(COHORTS):
     ax.set_xticks([0, .1, .2, .3]); ax.set_xticklabels(["0", "0.1", "0.2", "0.3"] if j == 2 else [])
     ax.axvline(.1, color=GRID, lw=.6, zorder=1)
     finish(ax)
-    note(ax, .295, .55, f"{(rP > .1).mean():.3f}", ha="right", size=8.5, color=BLUE_D)
-    note(ax, .295, .22, f"{(rQ > .1).mean():.3f}", ha="right", size=8.5, color=GREEN_D)
     if j == 0:
         ax.set_title("clean data", pad=5, fontsize=9)
-        note(ax, .295, .085, "rows above 0.1", ha="right", size=7.5, color=INK2)
 axes[(3, 1)].set_ylabel("fraction of rows above", labelpad=2)
 axes[(3, 2)].set_xlabel(r"clean residual  $|f_{\rm clean}-Y|$", labelpad=2)
 
@@ -72,5 +69,6 @@ fig.legend(handles=[Line2D([], [], color=BLUE_D, lw=6, alpha=.45, label="estimat
            loc="upper right", bbox_to_anchor=(.985, .998), ncol=3, fontsize=8, handlelength=1.4, handletextpad=.4, columnspacing=1.0, borderaxespad=0)
 for ci, ch in enumerate("abcd"):
     fig.text(x0s[ci] - .04, .905, f"({ch})", fontsize=11, fontweight="bold", va="bottom", color=INK)
+np.savez("examples/data/11b.npz", **DATA)
 fig.savefig("examples/figures/11b_after.png", dpi=220); fig.savefig("examples/figures/11b_after.pdf")
 print("saved examples/figures/11b_after.{png,pdf}")

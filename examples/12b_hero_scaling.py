@@ -13,6 +13,7 @@ from matplotlib.lines import Line2D
 from afp.evidence import evidence_style, finish, MM
 
 evidence_style(font=8)
+DATA = {}
 OURS, BASE = "#b03060", "#3b7dd8"           # prominent for the method, muted blue for the baseline
 GREENA = "#1f8a4c"; RED = "#c0392b"
 
@@ -48,10 +49,10 @@ axa = fig.add_axes([.065, .19, .20, .66]); axb = fig.add_axes([.395, .19, .20, .
 sizes = np.array([1, 2, 4, 8, 12, 16, 20, 30, 40, 50], float)
 ours_rt = 6 * sizes ** 1.45; base_rt = 8.2 * ours_rt * (sizes / 16) ** .25
 ours_mem = .35 * sizes ** 1.1; base_mem = ours_mem * 9
-panel(axa, sizes, base_rt, ours_rt, base_mem, ours_mem, 16, "MIS: runtime & memory", "8.2× faster", "−79 GB")
+panel(axa, sizes, base_rt, ours_rt, base_mem, ours_mem, 16, "MIS: runtime & memory", "faster", "less memory")
 sizes_t = np.array([1, 2, 3, 4, 6, 10, 15, 20, 30], float)
 ours_t = .7 * sizes_t ** 1.7; base_t = 29 * ours_t * (sizes_t / 4) ** .3
-panel(axb, sizes_t, base_t, ours_t, .3 * sizes_t ** 1.2, .3 * sizes_t ** 1.2 * 7, 4, "TSP: runtime & memory", "29× faster", "−76 GB")
+panel(axb, sizes_t, base_t, ours_t, .3 * sizes_t ** 1.2, .3 * sizes_t ** 1.2 * 7, 4, "TSP: runtime & memory", "faster", "less memory")
 
 # (c) speedup panel
 n = np.logspace(2, 4.3, 9)
@@ -59,7 +60,7 @@ series = [("framework 1, task A", BASE, "-", "o", 1.0 * (n / 100) ** .55), ("fra
           ("framework 2, task A", GREENA, "-", "^", .8 * (n / 100) ** .45), ("framework 3, task A", OURS, "-", "p", .7 * (n / 100) ** .6),
           ("framework 3, task B", OURS, ":", "h", .75 * (n / 100) ** .58)]
 for lab, c, ls, mk, y in series:
-    y = np.minimum(y, 30) * (1 + .05 * np.sin(n)); axc.plot(n, y, ls=ls, marker=mk, color=c, lw=1.6, ms=4, mfc="white" if ls != "-" else c, label=lab)
+    y = np.minimum(y, 30) * (1 + .05 * np.sin(n)); DATA[f"speedup_{lab}"] = y; axc.plot(n, y, ls=ls, marker=mk, color=c, lw=1.6, ms=4, mfc="white" if ls != "-" else c, label=lab)
 axc.axhline(1, color="#999", lw=.8, ls=":"); axc.text(n[0], 1.08, "1×", color="#999", fontsize=7, style="italic")
 axc.set_xscale("log"); axc.set_yscale("log"); axc.set_ylim(.6, 40)
 axc.set_xlabel("graph size $n$ (log)", fontweight="bold"); axc.set_ylabel("speedup (×)", fontweight="bold")
@@ -67,5 +68,9 @@ axc.set_title("Speedup: frameworks & tasks", fontsize=9, loc="left", fontweight=
 axc.legend(fontsize=6.5, loc="upper left", ncol=1, frameon=True, framealpha=.9, edgecolor="#ddd"); finish(axc)
 for ax, ch in [(axa, "a"), (axb, "b"), (axc, "c")]:
     bb = ax.get_position(); fig.text(bb.x0 - .045, bb.y1 + .02, f"({ch})", fontsize=11, fontweight="bold")
+DATA.update(mis_sizes=sizes, mis_base_runtime=base_rt, mis_ours_runtime=ours_rt, mis_base_memory=base_mem, mis_ours_memory=ours_mem, mis_baseline_oom_from=16,
+            tsp_sizes=sizes_t, tsp_base_runtime=base_t, tsp_ours_runtime=ours_t, tsp_base_memory=.3 * sizes_t ** 1.2 * 7, tsp_ours_memory=.3 * sizes_t ** 1.2, tsp_baseline_oom_from=4,
+            speedup_graph_size=n)
+np.savez("examples/data/12b.npz", **DATA)
 fig.savefig("examples/figures/12b_after.png", dpi=220); fig.savefig("examples/figures/12b_after.pdf")
 print("saved examples/figures/12b_after.{png,pdf}")

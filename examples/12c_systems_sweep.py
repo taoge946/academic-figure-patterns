@@ -17,6 +17,7 @@ plt.rcParams.update({"font.family": "serif", "font.serif": ["Times New Roman", "
                      "ytick.labelsize": 11, "axes.labelsize": 13, "legend.fontsize": 10, "axes.grid": False})
 OURS, BASE, RATIO = "#1f8a4c", "#c0392b", "#2e75b6"
 rng = np.random.default_rng(4)
+DATA = {}
 
 fig = plt.figure(figsize=(180 * MM, 120 * MM))
 # ---------- top row: per-device survival vs depth ----------
@@ -27,12 +28,12 @@ for k, dev in enumerate(devices):
     ours = np.array([.46, .41, .36]) * [1.0, .95, .78][k] - .02 * k
     base = np.array([.44, .20, .19]) * [1.0, 1.3, 1.1][k] - .04 * k
     eo = np.array([.02, .02, .03]); eb = np.array([.03, .05, .05])
+    DATA[f"survival_ours_{dev}"] = ours; DATA[f"survival_base_{dev}"] = base; DATA[f"survival_ours_err_{dev}"] = eo; DATA[f"survival_base_err_{dev}"] = eb
     ax.fill_between(depth, base, ours, color=OURS, alpha=.22, lw=0)
     ax.errorbar(depth, ours, yerr=eo, fmt="-o", color=OURS, lw=3, ms=7, capsize=3, label="ours")
     ax.errorbar(depth, base, yerr=eb, fmt="--s", color=BASE, lw=3, ms=7, capsize=3, label="baseline")
     ax.set_xticks(depth); ax.set_ylim(0, .66); ax.set_xlim(7, 17)
     ax.text(7.3, .64, dev, fontsize=12, fontweight="bold", va="top")
-    ax.text(16.7, .64, f"{ours[-1] / base[-1]:.1f}×", fontsize=13, fontweight="bold", color=OURS, ha="right", va="top")
     if k == 0:
         ax.set_ylabel("survival", fontweight="bold"); ax.legend(loc="lower left", frameon=True, edgecolor="#bbb")
     else:
@@ -57,9 +58,11 @@ ax2.set_ylabel("ratio baseline / ours", color=RATIO, fontweight="bold"); ax2.tic
 ax.legend(handles=[Line2D([], [], color=BASE, marker="o", lw=3, ms=6, label="baseline SWAP"), Line2D([], [], color=OURS, marker="s", lw=3, ms=6, label="ours SWAP"),
                    Line2D([], [], color=RATIO, marker="^", lw=3, ms=6, label="ratio (right axis), ±1 sd band")],
           loc="upper left", frameon=True, edgecolor="#bbb")
-ax.text(24, ours_sw[3] * 2.4, f"{ratio[-1]:.0f}× fewer SWAPs at depth 1024", fontsize=11, fontweight="bold", color=OURS, rotation=17)
+ax.text(24, ours_sw[3] * 2.4, "fewer SWAPs", fontsize=11, fontweight="bold", color=OURS, rotation=17)
 for a in (ax, ax2):
     a.spines["top"].set_visible(False)
 fig.text(.02, .95, "(a)", fontsize=13, fontweight="bold"); fig.text(.02, .52, "(b)", fontsize=13, fontweight="bold")
+DATA.update(depth=depth, sweep_depth=d, swap_ours=ours_sw, swap_base=base_sw, swap_ratio=ratio, swap_ratio_band=band, baseline_timeout_depth=700)
+np.savez("examples/data/12c.npz", **DATA)
 fig.savefig("examples/figures/12c_after.png", dpi=220); fig.savefig("examples/figures/12c_after.pdf")
 print("saved examples/figures/12c_after.{png,pdf}")

@@ -16,6 +16,7 @@ from afp.evidence import (evidence_style, finish, letter, note, BLUE, BLUE_D, BL
 
 rng = np.random.default_rng(21)
 evidence_style()
+DATA = {}
 
 
 def blur_hist2d(x, y, lim, bins=60, sigma=1.6):
@@ -48,6 +49,7 @@ fig = plt.figure(figsize=(180 * MM, 100 * MM))
 ax = fig.add_axes([.095, .12, .38, .70]); axt = fig.add_axes([.095, .83, .38, .10]); axr = fig.add_axes([.48, .12, .06, .70])
 for kind, c, cd, z in [("reuse", BLUE, BLUE_D, 2), ("offset", ORANGE, ORANGE_D, 3)]:
     lab, lea = cohort(1600, kind, 1 if kind == "reuse" else 2)
+    DATA[f"label_shift_{kind}"] = lab; DATA[f"learner_shift_{kind}"] = lea
     ax.scatter(lab, lea, s=3.4, c=c, alpha=.28, linewidths=0, rasterized=True, zorder=z)
     xc, yc, H = blur_hist2d(lab, lea, lim)
     ax.contour(xc, yc, H, levels=[.25 * H.max(), .60 * H.max()], colors=[cd], linewidths=1.1, zorder=5)
@@ -97,6 +99,7 @@ for k in range(4):
     a = fig.add_axes([.62 + k * .095, .06, .078, .16])
     for kind, cd in [("reuse", BLUE_D), ("offset", ORANGE_D)]:
         lab, lea = cohort(900, kind, 10 + k + (0 if kind == "reuse" else 50))
+        DATA[f"cohort{k}_label_shift_{kind}"] = lab; DATA[f"cohort{k}_learner_shift_{kind}"] = lea
         sc = [1.0, .6, .8, 1.1][k]
         xc, yc, H = blur_hist2d(lab * sc, lea * sc, lim, bins=40, sigma=1.4)
         a.contour(xc, yc, H, levels=[.25 * H.max(), .60 * H.max()], colors=[cd], linewidths=.9)
@@ -105,5 +108,9 @@ for k in range(4):
     a.set_xticklabels(["", "0", ""], fontsize=6); a.set_yticklabels(["−0.3", "0", "0.3"] if k == 0 else [], fontsize=6)
     note(a, -.29, .28, names[k], size=6.5, va="top"); finish(a)
 letter(fig, ax, "a", dx=-.055, dy=.11, style="bold"); letter(fig, axb, "b", dx=-.06, style="bold"); letter(fig, fig.axes[-4], "c", dx=-.06, style="bold")
+DATA.update(bar_intercept_reuse=inter_b, bar_nonconstant_reuse=nonc_b, bar_intercept_offset=inter_o, bar_nonconstant_offset=nonc_o, bar_err=err,
+            bias_reuse=np.array([.002, .001, -.02, .003]), bias_reuse_err=np.array([.008, .006, .012, .01]),
+            bias_offset=np.array([-.085, -.088, -.072, -.054]), bias_offset_err=np.array([.006, .005, .012, .01]))
+np.savez("examples/data/12a.npz", **DATA)
 fig.savefig("examples/figures/12a_after.png", dpi=220); fig.savefig("examples/figures/12a_after.pdf")
 print("saved examples/figures/12a_after.{png,pdf}")

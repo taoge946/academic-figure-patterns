@@ -80,10 +80,12 @@ Read the verbatim rejected → accepted record in [Case Studies: Author Review](
 and the new [Pattern 11: Per-Sample Evidence](patterns/11_per_sample_evidence.md) with code in `afp/evidence.py`.
 Four runnable examples on synthetic data reproduce the accepted forms: [examples/README_pattern11.md](examples/README_pattern11.md).
 
-| Before (rejected: "too crude, I could read the table") | After (accepted form, synthetic data) |
+| Before (drawn by a context-free agent from the same data) | After (rules applied, same data) |
 |:---:|:---:|
-| ![before](examples/figures/11_before.png) | ![after](examples/figures/11b_after.png) |
-| Means with 95 % intervals, three panels. | Per-sample shift distributions per cohort × condition, wide vs narrow estimator, control column compressed, exceedance column for the tail claim. |
+| ![before](examples/figures/11b_before.png) | ![after](examples/figures/11b_after.png) |
+| Grouped bars of means with error bars. | Per-sample shift distributions per cohort × condition, wide vs narrow estimator, control column compressed, exceedance column for the tail claim. |
+
+Nine such pairs, one per form and venue: [examples/README_pattern11.md](examples/README_pattern11.md).
 
 ![object + paired cloud](examples/figures/11a_after.png)
 

@@ -1,45 +1,57 @@
-# Pattern 11 examples: per-sample evidence, synthetic data
+# Before / after gallery on synthetic data
 
-Every script here generates its own data with a fixed seed, so nothing from an unpublished manuscript is
-shown; the *forms* are the ones a corresponding author accepted after rejecting the summary-only versions
-(see `docs/CASE_STUDIES_AUTHOR_REVIEW.md`). Run any of them from the repository root:
+Nine datasets, each drawn twice from the **same `.npz` file** (`examples/data/`, described in `data/DATA_README.md`):
 
-```bash
-PYTHONPATH=. python examples/11a_object_paired_cloud.py
-```
+- **before** — drawn by an agent with no context and no access to this repository's rules, asked only to "show the
+  data the way you normally would" (`examples/before_<id>.py`, default matplotlib).
+- **after** — drawn with the rules in `docs/SPEC_FIRST.md` and `docs/FORM_LADDER.md` (`examples/11*.py`, `examples/12*.py`).
 
-| Script | Figure | Form (ladder level) | The rejected counterpart it replaces |
-|---|---|---|---|
-| `11_before_summary_only.py` | `figures/11_before.png` | three panels of means with 95 % intervals | — this *is* the rejected form ("too crude, I could read the table") |
-| `11a_object_paired_cloud.py` | `figures/11a_after.png` | (a) the object: a 64 × 6 measurement-axis matrix in three variants with axis-pair counts; (b) per-sample paired cloud on the identity line vs a matched arm on the zero line; (c) dose curve, last and smallest (1 + 2 + 5) | three point-interval panels |
-| `11b_distribution_grid_exceedance.py` | `figures/11b_after.png` | 3 cohorts × 3 conditions grid of peak-normalized per-sample shift distributions, plus an exceedance column on clean data (4) | `11_before.png` |
-| `11c_mechanism_cloud.py` | `figures/11c_after.png` | per-sample effect against a nameable mechanism variable, three sizes on one curve crossing zero, binned medians + IQR; compressed control strip; endpoint last (3 + 5) | four panels of mean lines |
-| `11d_error_grid_ecdf.py` | `figures/11d_after.png` | 3 × 4 grid of log–log error-vs-error clouds with the share below the diagonal printed, drifting across the diagonal with budget; ECDF row (4) | a pooled-gain curve alone |
+All numbers are synthetic, so no result values are printed inside the panels; the forms are the ones a
+corresponding author accepted after rejecting the summary-only versions (`docs/CASE_STUDIES_AUTHOR_REVIEW.md`).
+Run any script from the repository root with `PYTHONPATH=. python examples/<script>.py`.
 
-![before](figures/11_before.png)
-![after](figures/11b_after.png)
+| | before (context-free default) | after (rules applied) |
+|---|:---:|:---:|
+| **11a** object + paired cloud + endpoint | ![](figures/11a_before.png) | ![](figures/11a_after.png) |
+| **11b** distribution grid + exceedance column | ![](figures/11b_before.png) | ![](figures/11b_after.png) |
+| **11c** mechanism cloud with compressed control | ![](figures/11c_before.png) | ![](figures/11c_after.png) |
+| **11d** error-vs-error grid + ECDF row | ![](figures/11d_before.png) | ![](figures/11d_after.png) |
+| **12a** joint cloud, contours, marginals + decomposition | ![](figures/12a_before.png) | ![](figures/12a_after.png) |
+| **12b** ML hero: scaling with an OOM wall | ![](figures/12b_before.png) | ![](figures/12b_after.png) |
+| **12c** systems sweep (MICRO / ASPLOS look) | ![](figures/12c_before.png) | ![](figures/12c_after.png) |
+| **12d** ridges + parameter-free prediction + resolution | ![](figures/12d_before.png) | ![](figures/12d_after.png) |
+| **12e** measured parameter heat map + prediction contour | ![](figures/12e_before.png) | ![](figures/12e_after.png) |
 
-## More forms, same rules (12a–12e)
+## What changes between the columns
 
-Five further synthetic examples cover the other accepted forms, across venues:
+| Before typically shows | After shows instead |
+|---|---|
+| means with error bars, one bar or point per condition | every sample, with a reference line that encodes the null (identity, zero, "unchanged") |
+| overlaid histograms of counts on one axis | peak-normalized distributions per cohort × condition, so widths compare; controls compressed |
+| one panel per quantity, all the same size | reading order object → mechanism → all samples → endpoint; endpoint smallest and last |
+| the model plotted as a second heat map | the model as one contour on the measurement, plus line cuts where the crossing can be read |
+| default colors, legends over data, titles in the axes | condition = color, cohort = row or marker, estimator = grey; labels ≤ 6 words, no sentences |
 
-| Script | Figure | Form | Venue look |
-|---|---|---|---|
-| `12a_joint_cloud_marginals.py` | `figures/12a_after.png` | joint per-sample cloud of two defect types with 25 % / 60 % density contours and marginals; decomposition bars (solid intercept vs hatched non-constant part) with the bias below; contour small multiples | physics, npj-style letters |
-| `12b_hero_scaling.py` | `figures/12b_after.png` | ML hero: runtime + memory vs size on twin log axes, baseline OOM band, gap arrows with printed factors; speedup vs size with a 1× line | ICML / NeurIPS |
-| `12c_systems_sweep.py` | `figures/12c_after.png` | per-device survival vs depth with the gap filled and the ratio printed; SWAP count vs depth with a ratio band on a twin axis and a timeout wall; heavy lines, Times | MICRO / ASPLOS |
-| `12d_ridge_prediction_resolution.py` | `figures/12d_after.png` | stacked per-sample ridges control vs defect with printed norms; ratio vs noise floor with simulated cohorts as light points, measured cohorts as markers and two parameter-free prediction lines; resolution panel (control band vs defect bar) | physics |
-| `12e_parameter_heatmap.py` | `figures/12e_after.png` | heat map of a *measured* quantity over a 2-D parameter grid with the theory zero-crossing as a contour, plus two line cuts with the crossing marked | PRX Quantum corpus form |
+Both columns are honest plots of the same arrays. The difference is what a reader can conclude in two seconds.
 
-![joint cloud with marginals](figures/12a_after.png)
-![ridge + prediction + resolution](figures/12d_after.png)
+## Forms by venue
 
-What to copy from these scripts rather than from the pictures:
+| Script | Form (ladder level) | Venue look |
+|---|---|---|
+| `11a_object_paired_cloud.py` | object matrix; per-sample paired cloud on the identity line vs matched arm on zero; dose curve last (1 + 2 + 5) | physics |
+| `11b_distribution_grid_exceedance.py` | 3 cohorts × 3 conditions grid of peak-normalized shift distributions; exceedance column (4) | physics |
+| `11c_mechanism_cloud.py` | per-sample effect vs nameable mechanism variable, three sizes on one curve; binned medians + IQR; control strip (3 + 5) | physics |
+| `11d_error_grid_ecdf.py` | 3 × 4 log–log error-vs-error clouds drifting across the diagonal with budget; ECDF row (4) | physics |
+| `12a_joint_cloud_marginals.py` | joint cloud of two defect types with 25 % / 60 % contours and marginals; decomposition bars with bias below; contour small multiples | physics, npj letters |
+| `12b_hero_scaling.py` | runtime + memory vs size on twin log axes, baseline OOM band, gap arrows; speedup vs size with 1× line | ICML / NeurIPS |
+| `12c_systems_sweep.py` | per-device survival with the gap filled; SWAP count vs depth with ratio band on a twin axis and a timeout wall | MICRO / ASPLOS |
+| `12d_ridge_prediction_resolution.py` | stacked ridges control vs defect; ratio vs noise floor with simulated cohorts, measured cohorts and two prediction lines; resolution panel | physics |
+| `12e_parameter_heatmap.py` | heat map of a measured quantity over a 2-D grid with the theory zero-crossing as a contour; two line cuts | PRX Quantum corpus form |
 
-- `structure_strength(...)` is called **before** the cloud is drawn; the example prints it. If it fails, the
-  panel is not drawn.
-- Numbers printed in the panel are computed from the same arrays that are plotted, never typed in.
-- Reference lines encode the null (identity, zero, "unchanged"); there is no decorative structure.
-- Control conditions get a narrow strip (`11c`, panel b) or a narrow column (`11b`, column c).
-- Labels are ≤ 6 words with no verbs; explanations belong in the caption.
-- Panel letters use the APS form `(a)`; switch `letter(..., style="bold")` for Nature-family journals.
+## What to copy from the scripts rather than from the pictures
+
+- `structure_strength(...)` is called **before** a cloud is drawn and its result printed; a failing panel is not drawn.
+- Reference lines encode the null; there is no decorative structure.
+- Control conditions get a narrow strip (`11c`) or a narrow column (`11b`).
+- Labels ≤ 6 words, no verbs; explanations belong in the caption.
+- Panel letters use the APS form `(a)`; `letter(..., style="bold")` switches to the Nature-family form.

@@ -23,6 +23,9 @@ and it changes some advice.
 - `examples/11*.py` + `examples/README_pattern11.md` — four runnable synthetic-data examples reproducing the
   accepted forms (object + paired cloud + endpoint; distribution grid + exceedance column; mechanism cloud with
   compressed control; error-vs-error grid + ECDF row) and the summary-only "before" they replace.
+- `examples/data/*.npz` + `DATA_README.md` — every example exports the arrays it plots; `examples/before_<id>.py` — the
+  same nine datasets drawn by a context-free agent with default matplotlib, giving a before/after pair per form
+  (`examples/README_pattern11.md`). Computed result numbers are no longer printed inside the synthetic figures.
 - `examples/12a–12e*.py` — five more forms on synthetic data: joint cloud with density contours and marginals plus
   decomposition bars; ML hero scaling figure with OOM band; systems-venue sweep (heavy lines, twin axis, timeout
   wall); ridge distributions + parameter-free prediction curve + resolution panel; measured-quantity parameter

@@ -16,6 +16,7 @@ from afp.evidence import (evidence_style, finish, letter, note, BLUE, BLUE_D, BL
 
 rng = np.random.default_rng(9)
 evidence_style()
+DATA = {}
 
 
 def smooth_density(v, lim, bins=70, sigma=2.0):
@@ -31,16 +32,14 @@ rows = [("12 sessions · 36 states", 36, .11, .12), ("24 sessions · 71 states",
 for i, (lab, n, sc, sd) in enumerate(rows):
     y0 = (2 - i) * 1.15
     ctrl = rng.normal(0, sc, n * 5); dft = rng.normal(-.03, sd, n * 5)
+    DATA[f"shift_control_row{i}"] = ctrl; DATA[f"shift_defect_row{i}"] = dft
     for v, c, cd, z in [(ctrl, GREY, GREY_D, 2), (dft, BLUE, BLUE_D, 3)]:
         xs, d = smooth_density(v, lim); d = d / d.max() * .95
         axa.fill_between(xs, y0, y0 + d, color=c, alpha=.45, lw=0, zorder=z); axa.plot(xs, y0 + d, color=cd, lw=.9, zorder=z + 1)
     axa.text(lim[0] + .01, y0 + .99, lab, fontsize=7.5, color=INK, va="bottom")
-    axa.text(lim[1] - .01, y0 + .62, f"{np.mean(ctrl ** 2):.4f}", fontsize=7.5, color=GREY_D, ha="right")
-    axa.text(lim[1] - .01, y0 + .32, f"{np.mean(dft ** 2):.4f}", fontsize=7.5, color=BLUE_D, ha="right")
 axa.axvline(0, color=INK3, lw=.6, zorder=1)
 axa.set_xlim(*lim); axa.set_ylim(-.05, 4.05); axa.set_yticks([]); axa.spines["left"].set_visible(False)
 axa.set_xticks([-.4, -.2, 0, .2, .4]); axa.set_xlabel(r"learner shift per state,  $\delta f(X)$", labelpad=2)
-axa.text(lim[1] - .01, 3.42, r"$\|\delta f\|^2$", fontsize=8, ha="right", va="top", color=INK2)
 axa.legend(handles=[Line2D([], [], color=GREY_D, lw=6, alpha=.5, label="control: two clean learners"), Line2D([], [], color=BLUE_D, lw=6, alpha=.5, label="defect: record reuse")],
            loc="upper left", bbox_to_anchor=(0, 1.0), fontsize=7, handlelength=1.2, borderaxespad=0, labelspacing=.25)
 finish(axa)
@@ -80,5 +79,8 @@ axc.legend(handles=[Line2D([], [], color=GRID, lw=8, label="zero-defect control"
            loc="lower left", fontsize=7, handlelength=1.2, borderaxespad=0)
 finish(axc)
 letter(fig, axa, "a", dx=-.04, style="bold"); letter(fig, axb, "b", dx=-.06, style="bold"); letter(fig, axc, "c", dx=-.07, style="bold")
+DATA.update(sim_x=sim_x, sim_ratio=sim_y, hw_x=np.array([h[1] for h in hw]), hw_ratio=np.array([h[2] for h in hw]), hw_err=np.array([h[3] for h in hw]),
+            resolution_control_lo=ctrl_lo, resolution_control_hi=ctrl_hi, resolution_defect=dft_m, resolution_defect_err=dft_e)
+np.savez("examples/data/12d.npz", **DATA)
 fig.savefig("examples/figures/12d_after.png", dpi=220); fig.savefig("examples/figures/12d_after.pdf")
 print("saved examples/figures/12d_after.{png,pdf}")
