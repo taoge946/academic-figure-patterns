@@ -59,9 +59,25 @@ colors = get_method_colors(['GNN', 'Transformer', 'Ours'])
 
 The real value is in the pattern library. Start here:
 
-1. **[Claim → Pattern Map](docs/CLAIM_TO_PATTERN.md)** — "I want to show X" → read pattern Y
-2. **[Anti-Patterns](docs/ANTI_PATTERNS.md)** — 14 common mistakes that scream "amateur"
-3. **[Storytelling Techniques](docs/STORYTELLING.md)** — 10 visual narrative techniques from top papers
+1. **[Spec First](docs/SPEC_FIRST.md)** — write the four-question spec per panel *before* plotting (new in 0.2)
+2. **[Form Ladder](docs/FORM_LADDER.md)** — what reviewers mean by "cheap", and the five-level ladder from summary panels to per-sample evidence (new in 0.2)
+3. **[Claim → Pattern Map](docs/CLAIM_TO_PATTERN.md)** — "I want to show X" → read pattern Y
+4. **[Anti-Patterns](docs/ANTI_PATTERNS.md)** — 21 common mistakes that scream "amateur"
+5. **[Storytelling Techniques](docs/STORYTELLING.md)** — 10 visual narrative techniques from top papers
+
+## New in 0.2: Field-Tested Rules From Author Review
+
+The 0.1 release was distilled from published papers. Since then the patterns were used on two real
+manuscripts through ~30 rejected figure versions and validated by three blind runs. Three things changed:
+
+| Old advice | What review taught |
+|---|---|
+| "Add elements until the panel has ≥ 6" | Six annotations on three bars is still three bars. The fix is **per-sample data whose structure is the conclusion**; pooled statistics go last and smallest. |
+| Pick a pattern, then plot | **Write the spec first** (claim, comparison, encoding, *what it looks like if the claim is false*) and get it approved before any code. Every figure that skipped this was rejected at least twice. |
+| Caption = conclusion | True at ML venues. **APS journals want the caption to describe and the text to conclude.** See [Venue Rules](docs/VENUE_RULES.md). |
+
+Read the verbatim rejected → accepted record in [Case Studies: Author Review](docs/CASE_STUDIES_AUTHOR_REVIEW.md),
+and the new [Pattern 11: Per-Sample Evidence](patterns/11_per_sample_evidence.md) with code in `afp/evidence.py`.
 
 ## Core Concept: Claim-First Design
 
@@ -77,7 +93,7 @@ The claim determines which **pattern** to use, which determines the figure's str
 
 ## The Pattern Library
 
-### 10 Design Patterns
+### 11 Design Patterns
 
 Each pattern documents the visual structure, required elements, and code template for a common figure type:
 
@@ -93,6 +109,7 @@ Each pattern documents the visual structure, required elements, and code templat
 | 08 | [Pareto Tradeoff](patterns/08_pareto_tradeoff.md) | Efficiency vs performance | 7 |
 | 09 | [Distribution Analysis](patterns/09_distribution.md) | Statistical robustness | 6 |
 | 10 | [Quantum Hardware](patterns/10_quantum_hardware.md) | Quantum device results | 7 |
+| 11 | [Per-Sample Evidence](patterns/11_per_sample_evidence.md) | "The effect is in the data, row by row" — paired clouds, distribution grids, exceedance curves | 6 |
 
 ### 14 Visualization Techniques
 
@@ -113,7 +130,7 @@ Advanced techniques with complete code:
 | 11 | [Joint + Marginal](techniques/11_joint_marginal.md) | Scatter without context |
 | 12 | [Connection Patch](techniques/12_connection_patch.md) | Disconnected subplots |
 | 13 | [Advanced Chart Types](techniques/13_advanced_chart_types.md) | Default matplotlib only |
-| 14 | [Storytelling](techniques/14_advanced_chart_types.md) | Figures without narrative |
+| 14 | [Storytelling](docs/STORYTELLING.md) | Figures without narrative |
 
 ### 10 Storytelling Techniques
 
@@ -143,7 +160,7 @@ Visual storytelling tools (use ≥3 per figure):
 - **Gap arrow**: One clean arrow + number at the most critical comparison
 - **Pareto frontier**: Your dots on the frontier; dominated region grayed out
 
-## 14 Anti-Patterns
+## 21 Anti-Patterns
 
 Things that instantly mark your figure as amateur:
 
@@ -158,7 +175,7 @@ Things that instantly mark your figure as amateur:
 | AP-13 | No reference lines | Add random chance / human / SOTA / theoretical bound |
 | AP-14 | Caption describes, not concludes | First sentence = takeaway, not "Figure X shows..." |
 
-See [full anti-pattern list](docs/ANTI_PATTERNS.md) for all 14 with examples.
+See [full anti-pattern list](docs/ANTI_PATTERNS.md) for all 21 with examples; AP-15 to AP-21 come from author review of real manuscripts.
 
 ## Real Paper Case Studies
 

@@ -191,6 +191,100 @@ When generating figures for academic papers, **never** commit any of the followi
 - Bad: "Results on 4 datasets"
 - Good: "Our method achieves SOTA on all 4 datasets with 3x less compute"
 
+**Venue caveat (added 0.2)**: this is the ML convention. APS journals (PRX Quantum, PRL, PRA) expect the
+caption to *describe what is drawn and define the quantities*, with findings in the main text; an author
+reviewing for that venue rejected conclusion-style captions as "too long, explanations belong in the text".
+See [VENUE_RULES.md](VENUE_RULES.md).
+
+---
+
+# Anti-Patterns 15–21: From Author Review (added 0.2)
+
+The following were not learned from published papers but from ~30 figure versions a corresponding author
+rejected in 2026. Each quotes the verdict. Full record: [CASE_STUDIES_AUTHOR_REVIEW.md](CASE_STUDIES_AUTHOR_REVIEW.md).
+
+## AP-15: Summary-Only Main Panel
+
+**Symptom**: The main panel holds a handful of means with error bars, or a few mean lines, while per-sample
+data (rows, states, sessions) exist in the results folder.
+
+**Reviewer's reaction**: _"Too crude — a few lines and a few dots. I could read the table."_
+
+**Fix**: Find the per-sample arrays first. The main panel is a paired cloud, a distribution grid, an object
+matrix or a small-multiple grid of them; the pooled statistic becomes a printed number or the smallest, last
+panel. See [FORM_LADDER.md](FORM_LADDER.md).
+
+---
+
+## AP-16: Jittered Strips as the Main Panel
+
+**Symptom**: Every panel is a strip of jittered session or row points with a bar for the mean.
+
+**Reviewer's reaction**: _"All dot-plots. What advantage does this have over error bars?"_
+
+**Fix**: A strip is an error bar in disguise — it does not raise the information layer. Use it only when the
+claim is "the effect is unanimous across sessions" vs "driven by a few". Otherwise use a form whose *shape*
+carries the claim (diagonal, band, width difference).
+
+---
+
+## AP-17: Chart-Type Cycling Without a Diagnosis
+
+**Symptom**: After a rejection, the same data is redrawn as a cloud, then as points, then as a histogram, each
+time with a new pair of variables but no statement of what failed.
+
+**Reviewer's reaction**: _"You only know scatter plots?"_ … _"Swapping to a pile of messy points doesn't make it
+less cheap."_
+
+**Fix**: Before redrawing, name the failed layer (no per-sample data? structure fails the load-bearing test?
+form repeated?) and confirm it with the reviewer. Then change the layer, not the axes. After two failures,
+look at the target venue's corpus for forms.
+
+---
+
+## AP-18: Sentences Inside the Figure
+
+**Symptom**: In-panel text like "binned medians cross zero at z ≈ 0.45: high labels pulled down" or a
+"points: session means; dark bar: …" legend line.
+
+**Reviewer's reaction**: _"Why is there so much text on this figure?"_
+
+**Fix**: Labels ≤ 6 words, no verbs, no colon explanations. Numbers may be printed if they come from the data
+file with a source. Explanations go to the caption or the text.
+
+---
+
+## AP-19: Degenerate Control Panel at Full Size
+
+**Symptom**: A control panel that shows "nothing happened" — a perfect diagonal, a flat band, a spike at zero —
+gets the same area as the panel carrying the result.
+
+**Fix**: Compress it to a narrow column or strip, or merge it into the neighbouring panel. It earns a place,
+not a full cell.
+
+---
+
+## AP-20: Decorative Structure
+
+**Symptom**: Contour lines on clouds that do not overlap; density rivers or gradient columns; quantile bands
+that carry no conclusion.
+
+**Reviewer's reaction**: _"Does this mean anything? What does it explain better?"_ … _"You love contours and
+scatter — path dependence?"_
+
+**Fix**: Run the numeric load-bearing test (correlation, median rise vs IQR width) before adding structure.
+Contours only when one-sample-one-point clouds overlap heavily. Delete anything that fails.
+
+---
+
+## AP-21: Redundant or Borrowed Encoding
+
+**Symptom**: Every point gets an outline ring although all are from the same cohort class; estimators borrow the
+colors reserved for experimental conditions; each figure has its own encoding scheme.
+
+**Fix**: One encoding table for the whole paper (condition = color, platform = shape, size = area, estimator =
+grey gradient, prediction = dashed no-fit line). Use an encoding only where it distinguishes something.
+
 ---
 
 ## Quick Reference Table
@@ -205,3 +299,7 @@ When generating figures for academic papers, **never** commit any of the followi
 | Qualitative | One output image | Grid comparison + zoom-in + metric overlay |
 | Training curves | One loss curve | Multi-panel + CI band + phase annotation |
 | Trade-off | One scatter plot | Pareto frontier + configuration labels + dominated region |
+| Effect exists (physics) | Means with error bars per cohort | Per-row paired cloud on the identity line, matched arm on zero; pooled number printed |
+| Estimator fragility | Two points with intervals | Two peak-normalized per-row distributions, wide vs narrow, repeated over cohorts × conditions |
+| "Fewer large errors" | Mean squared error per method | Exceedance curves (fraction of rows above x), log y, threshold guide |
+| Control condition | Full-size panel of a flat band | Narrow strip beside the result panel |

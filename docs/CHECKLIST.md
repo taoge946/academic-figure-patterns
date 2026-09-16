@@ -4,21 +4,32 @@ After generating each figure, **verify every item below**. Any FAIL must be addr
 
 ---
 
+## 0. Spec -- Before Any Plotting Code (added 0.2, see SPEC_FIRST.md)
+
+- [ ] **S1: Four questions answered per panel** -- claim, comparison, encoding, *what the panel looks like if the claim is false*
+- [ ] **S2: Per-sample data located** -- the per-row / per-state / per-session arrays exist and the main panel uses them; pooled statistics are side notes or the smallest, last panel
+- [ ] **S3: Load-bearing test passed numerically** -- paired corr > 0.9, mechanism corr > 0.5 or median rise > IQR width, distribution width ratio ≥ 2 (FORM_LADDER.md)
+- [ ] **S4: One encoding table for the whole paper** -- condition = color, platform = shape, size = area, estimator = grey; no borrowed colors
+- [ ] **S5: Spec reviewed and approved** before the first line of plotting code
+- [ ] **S6: One script + one data file per figure**; every number carries its source; no refit or resampling in the script
+
 ## A. Content -- Most Important
 
 - [ ] **A1: Clear claim** -- Can you state in one sentence what this figure is meant to prove?
 - [ ] **A2: Comparative context** -- At least 1 baseline / reference / ground truth is present
 - [ ] **A3: Statistical information** -- Error bars / CI / statistical test results are included
-- [ ] **A4: Sufficient information density** -- Not "a few bars and done"; annotations, reference lines, and multiple dimensions are utilized
+- [ ] **A4: Sufficient information density** -- Not "a few bars and done"; per-sample data with visible structure, not merely more annotations (AP-15)
 - [ ] **A5: No cherry-picking** -- Includes easy + hard + failure cases (where applicable)
-- [ ] **A6: Numeric labels** -- Key values are annotated directly on the figure (best value, gap, speedup)
+- [ ] **A6: Numeric labels** -- Key values are annotated directly on the figure (best value, gap, speedup); sign and interval checked against the data file
+- [ ] **A7: No sentences inside the figure** -- labels ≤ 6 words, no verbs, no colon explanations (AP-18)
+- [ ] **A8: Degenerate control panels compressed** -- a perfect diagonal or flat band gets a strip, not a full cell (AP-19)
 
 ## B. Narrative
 
 - [ ] **B1: Self-explanatory** -- The figure is roughly understandable without reading the main text
 - [ ] **B2: Guided reading** -- Arrows / boxes / text annotations direct the reader to key findings
-- [ ] **B3: Panel order** -- Multi-panel figures follow a logical reading order (left to right, top to bottom)
-- [ ] **B4: Caption lead sentence** -- The first sentence of the caption is a takeaway, not a description
+- [ ] **B3: Panel order** -- object → mechanism → all samples → endpoint; endpoint panel last and smallest
+- [ ] **B4: Caption lead sentence** -- ML venues: the first sentence is a takeaway. APS journals: the caption describes what is drawn; the finding goes in the text (VENUE_RULES.md)
 
 ## C. Presentation
 

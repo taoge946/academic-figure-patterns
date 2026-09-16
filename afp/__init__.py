@@ -40,7 +40,17 @@ from afp.helpers import (
     sorted_bar_data,
 )
 
-__version__ = "0.1.0"
+from afp.evidence import (
+    structure_strength,
+    paired_cloud,
+    binned_median,
+    peak_normalized_hist,
+    ecdf,
+    exceedance_curve,
+    fraction_below_diagonal,
+)
+
+__version__ = "0.2.0"
 __all__ = [
     # Style
     "setup_style", "get_figsize", "get_method_colors",
@@ -54,4 +64,7 @@ __all__ = [
     "save_fig", "add_panel_labels", "add_reference_line", "add_vref_line",
     "annotate_best", "annotate_gap", "significance_bracket",
     "add_shaded_region", "add_inset_zoom", "sorted_bar_data",
+    # Per-sample evidence (Pattern 11)
+    "structure_strength", "paired_cloud", "binned_median", "peak_normalized_hist",
+    "ecdf", "exceedance_curve", "fraction_below_diagonal",
 ]

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "academic-figure-patterns"
-version = "0.1.0"
-description = "Design patterns for publication-quality academic figures. Content-focused guidance backed by analysis of 50+ top-venue papers."
+version = "0.2.0"
+description = "Design patterns for publication-quality academic figures. Content-focused guidance backed by analysis of 50+ top-venue papers and field-tested through author review."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8"
