@@ -13,12 +13,43 @@ Most plotting tutorials teach you *how to use matplotlib*. This project teaches 
 
 The difference between an undergraduate thesis figure and a top-venue figure is **not** fonts or colors — it's **content design**: what data to show, how to organize comparisons, what annotations guide the reader's eye, and how the figure tells a story without words.
 
-### Before vs After
+## Before → After: the same data, drawn twice
 
-| Before (undergraduate level) | After (publication ready) |
+Every pair below comes from **one `.npz` file** (`examples/data/`). The left column is the five-minute look at
+the data: one panel, one basic chart type, matplotlib defaults. The right column applies the rules in this
+repository. The data are synthetic and the labels generic, so what you see is the *form*, not a result.
+Scripts for both columns are in `examples/` (`before_<id>.py` and `<id>_*.py`); details in
+[examples/README_pattern11.md](examples/README_pattern11.md).
+
+### Physics-style result figures (per-sample evidence)
+
+| Before | After |
 |:---:|:---:|
-| ![before](examples/figures/01_before.png) | ![after](examples/figures/01_after.png) |
-| 4 bare bars. No error bars, no reference line, no annotations, no story. | Dual-panel, error bars, reference line, sorted by performance, gap annotation, shaded confidence region, color-coded by method. |
+| ![](examples/figures/11a_before.png) | ![](examples/figures/11a_after.png) |
+| Three bars of means. | **Object → paired cloud → endpoint.** The record itself as a matrix (reference and two replacement schemes with their pair counts); every sample as a point, scheme B on the identity line, the control scheme on the zero line; the pooled dose curve last and smallest. |
+| ![](examples/figures/11b_before.png) | ![](examples/figures/11b_after.png) |
+| Grouped bars of means, P vs Q. | **Distribution grid + tail column.** Cohorts × conditions, two peak-normalized per-sample distributions per cell (one wide, one narrow; both collapse in the control column); exceedance curves of the residual show which estimator makes fewer large errors. |
+| ![](examples/figures/11c_before.png) | ![](examples/figures/11c_after.png) |
+| One default scatter. | **Mechanism cloud.** Effect against a nameable explanatory variable, three system sizes on one curve, binned medians with an IQR band marking the zero crossing; the control compressed to a strip; the endpoint last. |
+| ![](examples/figures/11d_before.png) | ![](examples/figures/11d_after.png) |
+| Two lines of mean error. | **Error-vs-error grid.** Cohorts × budgets, each point one sample, method error against baseline error; the whole argument is the clouds drifting across the diagonal as the budget grows; ECDFs below. |
+| ![](examples/figures/12a_before.png) | ![](examples/figures/12a_after.png) |
+| Two grouped bars of means. | **Joint cloud with contours and marginals.** Two defect types on the same samples: one follows the diagonal, one is a constant offset; density contours, marginals, then the decomposition per cohort with the bias below, and contour small multiples. |
+| ![](examples/figures/12d_before.png) | ![](examples/figures/12d_after.png) |
+| Grouped bars by cohort size. | **Ridges + parameter-free prediction + resolution.** Control vs defect distributions per cohort size; the ratio against the noise floor with simulated cohorts as light points and two prediction lines drawn without fitting; a resolution panel of control band vs defect bar. |
+| ![](examples/figures/12e_before.png) | ![](examples/figures/12e_after.png) |
+| Nine overlaid lines. | **Measured parameter heat map + prediction contour.** The measured quantity on its 2-D grid, the theory's zero crossing as one contour on top, and two line cuts where the crossing can be read. |
+
+### ML and systems venues (same rules, different look)
+
+| Before | After |
+|:---:|:---:|
+| ![](examples/figures/12b_before.png) | ![](examples/figures/12b_after.png) |
+| Two runtime lines on linear axes. | **Hero scaling figure.** Runtime and memory against size on twin log axes, the baseline's failure region shaded, gap arrows; speedup against size with a 1× line. |
+| ![](examples/figures/12c_before.png) | ![](examples/figures/12c_after.png) |
+| Grouped bars of a mean metric. | **Systems sweep.** Per-device metric with the gap filled; cost against input size with the ratio and its band on a twin axis and the baseline's limit as a wall. Heavy lines and large type for a column that will be shrunk. |
+
+The earlier ML-style pairs from 0.1 (`examples/figures/01–03_*.png`) are still in `examples/`.
 
 ## What This Is (and Isn't)
 
@@ -78,16 +109,8 @@ manuscripts through ~30 rejected figure versions and validated by three blind ru
 
 Read the verbatim rejected → accepted record in [Case Studies: Author Review](docs/CASE_STUDIES_AUTHOR_REVIEW.md),
 and the new [Pattern 11: Per-Sample Evidence](patterns/11_per_sample_evidence.md) with code in `afp/evidence.py`.
-Four runnable examples on synthetic data reproduce the accepted forms: [examples/README_pattern11.md](examples/README_pattern11.md).
-
-| Before (drawn by a context-free agent from the same data) | After (rules applied, same data) |
-|:---:|:---:|
-| ![before](examples/figures/11b_before.png) | ![after](examples/figures/11b_after.png) |
-| Grouped bars of means with error bars. | Per-sample shift distributions per cohort × condition, wide vs narrow estimator, control column compressed, exceedance column for the tail claim. |
-
-Nine such pairs, one per form and venue: [examples/README_pattern11.md](examples/README_pattern11.md).
-
-![object + paired cloud](examples/figures/11a_after.png)
+Nine runnable before/after pairs on synthetic data reproduce the accepted forms (gallery at the top of this
+README; scripts and notes in [examples/README_pattern11.md](examples/README_pattern11.md)).
 
 ## Core Concept: Claim-First Design
 
