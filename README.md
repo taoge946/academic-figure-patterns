@@ -78,6 +78,14 @@ manuscripts through ~30 rejected figure versions and validated by three blind ru
 
 Read the verbatim rejected → accepted record in [Case Studies: Author Review](docs/CASE_STUDIES_AUTHOR_REVIEW.md),
 and the new [Pattern 11: Per-Sample Evidence](patterns/11_per_sample_evidence.md) with code in `afp/evidence.py`.
+Four runnable examples on synthetic data reproduce the accepted forms: [examples/README_pattern11.md](examples/README_pattern11.md).
+
+| Before (rejected: "too crude, I could read the table") | After (accepted form, synthetic data) |
+|:---:|:---:|
+| ![before](examples/figures/11_before.png) | ![after](examples/figures/11b_after.png) |
+| Means with 95 % intervals, three panels. | Per-sample shift distributions per cohort × condition, wide vs narrow estimator, control column compressed, exceedance column for the tail claim. |
+
+![object + paired cloud](examples/figures/11a_after.png)
 
 ## Core Concept: Claim-First Design
 

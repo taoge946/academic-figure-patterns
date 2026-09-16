@@ -6,9 +6,49 @@ overlaid distributions, ECDF and exceedance curves, plus a numeric load-bearing 
 *before* drawing.  Nothing here fits or resamples; inputs are the archived per-sample arrays.
 """
 import numpy as np
+import matplotlib.pyplot as plt
 
 INK = "#2b2b2b"
 INK2 = "#6e6e6e"
+INK3 = "#a3a3a3"
+GRID = "#ebeae7"
+# palette used by the accepted figures: condition colors + one accent, estimators in grey
+BLUE, BLUE_D, BLUE_L = "#3b7dd8", "#1f4f9c", "#c5d8f2"
+ORANGE, ORANGE_D = "#e8702a", "#a9430f"
+GREEN, GREEN_D = "#159d79", "#08795d"
+GREY, GREY_D = "#9a9a9a", "#5a5a5a"
+MM = 1 / 25.4
+
+
+def evidence_style(font=8):
+    """rcParams used by the accepted per-sample figures (light spines, no grid, small ticks)."""
+    plt.rcParams.update({
+        "font.family": "sans-serif", "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+        "font.size": font, "axes.labelsize": font + 1, "axes.titlesize": font + 1,
+        "axes.titlelocation": "left", "axes.titleweight": "normal",
+        "xtick.labelsize": font, "ytick.labelsize": font, "legend.fontsize": font,
+        "axes.linewidth": 0.7, "xtick.major.width": 0.7, "ytick.major.width": 0.7,
+        "xtick.major.size": 2.8, "ytick.major.size": 2.8, "axes.grid": False,
+        "axes.edgecolor": INK, "xtick.color": INK, "ytick.color": INK, "text.color": INK,
+        "axes.labelcolor": INK, "lines.linewidth": 1.0, "legend.frameon": False,
+        "pdf.fonttype": 42, "savefig.dpi": 300,
+    })
+
+
+def finish(ax):
+    for s in ("top", "right"):
+        ax.spines[s].set_visible(False)
+
+
+def letter(fig, ax, s, dx=-0.045, dy=0.012, style="paren"):
+    """Panel letter above the axes: style='paren' -> (a) (APS), 'bold' -> a (Nature/npj)."""
+    bb = ax.get_position()
+    txt = f"({s})" if style == "paren" else s
+    fig.text(bb.x0 + dx, bb.y1 + dy, txt, fontsize=11, fontweight="bold", va="bottom", ha="left", color=INK)
+
+
+def note(ax, x, y, s, ha="left", va="center", size=8, color=INK2, **kw):
+    return ax.text(x, y, s, ha=ha, va=va, fontsize=size, color=color, **kw)
 
 
 def structure_strength(x, y, kind="paired", nbins=10):

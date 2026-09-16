@@ -20,6 +20,9 @@ and it changes some advice.
   `exceedance_curve`, `fraction_below_diagonal`.
 - `examples/gallery/` — an accepted ICML 2026 hero figure (LoRe) with notes; `examples/specs/` — an accepted
   spec written with the template.
+- `examples/11*.py` + `examples/README_pattern11.md` — four runnable synthetic-data examples reproducing the
+  accepted forms (object + paired cloud + endpoint; distribution grid + exceedance column; mechanism cloud with
+  compressed control; error-vs-error grid + ECDF row) and the summary-only "before" they replace.
 - Anti-patterns AP-15 to AP-21 (summary-only main panel, jitter strips as main panel, chart-type cycling,
   sentences inside the figure, degenerate control at full size, decorative contours, redundant encoding).
 
