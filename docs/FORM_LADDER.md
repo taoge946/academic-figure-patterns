@@ -1,7 +1,7 @@
 # The Form Ladder: What "Sophisticated" and "Cheap" Actually Mean
 
 > Calibrated on seven main-text figures and two dozen rejected versions reviewed by a physicist author
-> (QTRACE, Sep 2026), then validated by three blind runs in which an agent that had read only this document
+> (a physics manuscript, Sep 2026), then validated by three blind runs in which an agent that had read only this document
 > and the spec rules produced first drafts the author accepted. See
 > [CASE_STUDIES_AUTHOR_REVIEW.md](CASE_STUDIES_AUTHOR_REVIEW.md) for the verbatim verdicts.
 
@@ -38,16 +38,16 @@ valid at the same level. "You seem to love scatter clouds — path dependence?" 
 1. **The object itself.** If the figure is about a *thing* (a setting composition, a record, a circuit, a
    sequence), draw the thing first, as a matrix / strip / grid, using one real instance (state the selection rule
    in the data file; do not pick the prettiest).
-   *Example:* a 64-setting × 6-qubit measurement-axis matrix, three blocks side by side (clean / arbitrary / matched).
+   *Example:* a settings × qubits measurement-axis matrix, three blocks side by side (reference / arbitrary / matched replacement).
 2. **Per-sample paired view.** The same sample under two constructions, x–y. The conclusion is the cloud's shape:
    diagonal = identical, horizontal band = unrelated, slanted line = proportional.
-   *Example:* 1,600 rows, shared vs fresh shots fall on the diagonal, matching collapses to the zero line.
+   *Example:* per-row label shifts under two replacement schemes fall on the diagonal; the matched scheme collapses to the zero line.
 3. **Per-sample effect vs an explanatory variable.** x = a mechanism variable the reader can name, y = the effect,
    with binned medians; where the structure crosses zero is the boundary.
-   *Example:* risk ratio against number of filled cells; three sizes fall on one curve crossing zero near 12.
+   *Example:* risk ratio against the number of filled cells; three system sizes fall on one curve that crosses zero at a boundary.
 4. **Multi-group per-sample small multiples.** A grid by cohort / pair / arm, shared axes, one cloud or one
    distribution per cell plus one summary line.
-   *Example:* five qubit pairs, one lifted by 0.118, the others pinned at zero; or a 3 × 3 matrix of
+   *Example:* five qubit pairs, one lifted clearly above zero, the others pinned at zero; or a 3 × 3 matrix of
    peak-normalized shift distributions (cohort × reuse design) where one input is wide and the other narrow.
 5. **Summary panel** (points + intervals, dumbbell, slopegraph): only for endpoint quantities, placed **last and
    smallest**, or grouped so the grouping itself is the structure.

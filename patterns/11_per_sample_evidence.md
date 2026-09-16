@@ -72,12 +72,12 @@ ax.set_yscale("log")
 ```
 
 ## Real examples (author-accepted)
-- Composition-channel figure: object matrix + paired cloud (r = 0.999 on the diagonal; matched arm on zero) +
-  small endpoint groups.
-- Boundary figure: risk ratio vs filled cells, three system sizes on one curve, zero crossing at ~12 cells.
+- Composition-channel figure: object matrix + paired cloud (on the diagonal; matched arm on zero) + small
+  endpoint groups.
+- Boundary figure: risk ratio vs filled cells, three system sizes on one curve with a common zero crossing.
 - Input-representation figure: 3 × 3 grid of peak-normalized shift distributions (wide vs narrow, both collapse
   under matching) + exceedance column.
-- Budget figure: 3 × 4 grid of log–log error-vs-error clouds with the percentage of rows below the diagonal
-  falling from ~67 % at K = 8 to ~20–30 % at K = 1024.
+- Budget figure: grid of log–log error-vs-error clouds with the share of rows below the diagonal falling as
+  the budget grows.
 
 Details and verdicts: [CASE_STUDIES_AUTHOR_REVIEW.md](../docs/CASE_STUDIES_AUTHOR_REVIEW.md).

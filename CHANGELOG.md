@@ -18,7 +18,7 @@ and it changes some advice.
 - `patterns/11_per_sample_evidence.md` — paired clouds, distribution grids, exceedance curves.
 - `afp/evidence.py` — `structure_strength`, `paired_cloud`, `binned_median`, `peak_normalized_hist`, `ecdf`,
   `exceedance_curve`, `fraction_below_diagonal`.
-- `examples/gallery/` — an accepted ICML 2026 hero figure (LoRe) with notes; `examples/specs/` — an accepted
+- `examples/gallery/` — an accepted ICML 2026 hero figure (LoRe) with notes; `examples/specs/` — a worked
   spec written with the template.
 - `examples/11*.py` + `examples/README_pattern11.md` — four runnable synthetic-data examples reproducing the
   accepted forms (object + paired cloud + endpoint; distribution grid + exceedance column; mechanism cloud with
