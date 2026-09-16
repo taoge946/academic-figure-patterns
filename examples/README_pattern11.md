@@ -19,6 +19,21 @@ PYTHONPATH=. python examples/11a_object_paired_cloud.py
 ![before](figures/11_before.png)
 ![after](figures/11b_after.png)
 
+## More forms, same rules (12a–12e)
+
+Five further synthetic examples cover the other accepted forms, across venues:
+
+| Script | Figure | Form | Venue look |
+|---|---|---|---|
+| `12a_joint_cloud_marginals.py` | `figures/12a_after.png` | joint per-sample cloud of two defect types with 25 % / 60 % density contours and marginals; decomposition bars (solid intercept vs hatched non-constant part) with the bias below; contour small multiples | physics, npj-style letters |
+| `12b_hero_scaling.py` | `figures/12b_after.png` | ML hero: runtime + memory vs size on twin log axes, baseline OOM band, gap arrows with printed factors; speedup vs size with a 1× line | ICML / NeurIPS |
+| `12c_systems_sweep.py` | `figures/12c_after.png` | per-device survival vs depth with the gap filled and the ratio printed; SWAP count vs depth with a ratio band on a twin axis and a timeout wall; heavy lines, Times | MICRO / ASPLOS |
+| `12d_ridge_prediction_resolution.py` | `figures/12d_after.png` | stacked per-sample ridges control vs defect with printed norms; ratio vs noise floor with simulated cohorts as light points, measured cohorts as markers and two parameter-free prediction lines; resolution panel (control band vs defect bar) | physics |
+| `12e_parameter_heatmap.py` | `figures/12e_after.png` | heat map of a *measured* quantity over a 2-D parameter grid with the theory zero-crossing as a contour, plus two line cuts with the crossing marked | PRX Quantum corpus form |
+
+![joint cloud with marginals](figures/12a_after.png)
+![ridge + prediction + resolution](figures/12d_after.png)
+
 What to copy from these scripts rather than from the pictures:
 
 - `structure_strength(...)` is called **before** the cloud is drawn; the example prints it. If it fails, the

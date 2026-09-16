@@ -23,6 +23,10 @@ and it changes some advice.
 - `examples/11*.py` + `examples/README_pattern11.md` — four runnable synthetic-data examples reproducing the
   accepted forms (object + paired cloud + endpoint; distribution grid + exceedance column; mechanism cloud with
   compressed control; error-vs-error grid + ECDF row) and the summary-only "before" they replace.
+- `examples/12a–12e*.py` — five more forms on synthetic data: joint cloud with density contours and marginals plus
+  decomposition bars; ML hero scaling figure with OOM band; systems-venue sweep (heavy lines, twin axis, timeout
+  wall); ridge distributions + parameter-free prediction curve + resolution panel; measured-quantity parameter
+  heat map with a prediction contour and line cuts.
 - Anti-patterns AP-15 to AP-21 (summary-only main panel, jitter strips as main panel, chart-type cycling,
   sentences inside the figure, degenerate control at full size, decorative contours, redundant encoding).
 
