@@ -28,17 +28,17 @@ for k, dev in enumerate(devices):
     ours = np.array([.46, .41, .36]) * [1.0, .95, .78][k] - .02 * k
     base = np.array([.44, .20, .19]) * [1.0, 1.3, 1.1][k] - .04 * k
     eo = np.array([.02, .02, .03]); eb = np.array([.03, .05, .05])
-    DATA[f"survival_ours_{dev}"] = ours; DATA[f"survival_base_{dev}"] = base; DATA[f"survival_ours_err_{dev}"] = eo; DATA[f"survival_base_err_{dev}"] = eb
+    DATA[f"metric_ours_{dev}"] = ours; DATA[f"metric_base_{dev}"] = base; DATA[f"metric_ours_err_{dev}"] = eo; DATA[f"metric_base_err_{dev}"] = eb
     ax.fill_between(depth, base, ours, color=OURS, alpha=.22, lw=0)
     ax.errorbar(depth, ours, yerr=eo, fmt="-o", color=OURS, lw=3, ms=7, capsize=3, label="ours")
     ax.errorbar(depth, base, yerr=eb, fmt="--s", color=BASE, lw=3, ms=7, capsize=3, label="baseline")
     ax.set_xticks(depth); ax.set_ylim(0, .66); ax.set_xlim(7, 17)
     ax.text(7.3, .64, dev, fontsize=12, fontweight="bold", va="top")
     if k == 0:
-        ax.set_ylabel("survival", fontweight="bold"); ax.legend(loc="lower left", frameon=True, edgecolor="#bbb")
+        ax.set_ylabel("metric", fontweight="bold"); ax.legend(loc="lower left", frameon=True, edgecolor="#bbb")
     else:
         ax.set_yticklabels([])
-    ax.set_xlabel("depth", fontweight="bold")
+    ax.set_xlabel("input size", fontweight="bold")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
 
@@ -48,21 +48,20 @@ d = np.array([4, 8, 16, 32, 64, 128, 256, 512, 1024], float)
 ours_sw = 60 * (d / 4) ** .55; base_sw = 60 * (d / 4) ** 1.02
 ratio = base_sw / ours_sw * (1 + .04 * rng.standard_normal(len(d))); band = ratio * .18
 ax2.fill_between(d, ratio - band, ratio + band, color=RATIO, alpha=.18, lw=0)
-ax2.plot(d, ratio, "-^", color=RATIO, lw=3, ms=7, label="ratio baseline / ours")
-ax.plot(d, base_sw, "-o", color=BASE, lw=3, ms=6, label="baseline SWAP"); ax.plot(d, ours_sw, "-s", color=OURS, lw=3, ms=6, label="ours SWAP")
+ax2.plot(d, ratio, "-^", color=RATIO, lw=3, ms=7, label="ratio")
+ax.plot(d, base_sw, "-o", color=BASE, lw=3, ms=6, label="baseline cost"); ax.plot(d, ours_sw, "-s", color=OURS, lw=3, ms=6, label="our cost")
 ax.fill_between(d, ours_sw, base_sw, color=OURS, alpha=.10, lw=0)
-ax.axvline(700, color=BASE, lw=2, ls="--", alpha=.7); ax.text(720, base_sw[-1] * .35, "baseline\ntimeout", color=BASE, fontsize=11, fontweight="bold")
+ax.axvline(700, color=BASE, lw=2, ls="--", alpha=.7); ax.text(720, base_sw[-1] * .35, "baseline\nlimit", color=BASE, fontsize=11, fontweight="bold")
 ax.set_xscale("log", base=2); ax.set_xticks(d); ax.set_xticklabels([str(int(v)) for v in d])
-ax.set_yscale("log"); ax.set_xlabel("circuit depth (log)", fontweight="bold"); ax.set_ylabel("SWAP count", fontweight="bold")
+ax.set_yscale("log"); ax.set_xlabel("input size (log)", fontweight="bold"); ax.set_ylabel("cost", fontweight="bold")
 ax2.set_ylabel("ratio baseline / ours", color=RATIO, fontweight="bold"); ax2.tick_params(axis="y", colors=RATIO); ax2.set_ylim(0, 22)
-ax.legend(handles=[Line2D([], [], color=BASE, marker="o", lw=3, ms=6, label="baseline SWAP"), Line2D([], [], color=OURS, marker="s", lw=3, ms=6, label="ours SWAP"),
+ax.legend(handles=[Line2D([], [], color=BASE, marker="o", lw=3, ms=6, label="baseline cost"), Line2D([], [], color=OURS, marker="s", lw=3, ms=6, label="our cost"),
                    Line2D([], [], color=RATIO, marker="^", lw=3, ms=6, label="ratio (right axis), ±1 sd band")],
           loc="upper left", frameon=True, edgecolor="#bbb")
-ax.text(24, ours_sw[3] * 2.4, "fewer SWAPs", fontsize=11, fontweight="bold", color=OURS, rotation=17)
 for a in (ax, ax2):
     a.spines["top"].set_visible(False)
 fig.text(.02, .95, "(a)", fontsize=13, fontweight="bold"); fig.text(.02, .52, "(b)", fontsize=13, fontweight="bold")
-DATA.update(depth=depth, sweep_depth=d, swap_ours=ours_sw, swap_base=base_sw, swap_ratio=ratio, swap_ratio_band=band, baseline_timeout_depth=700)
+DATA.update(input_size=depth, sweep_size=d, cost_ours=ours_sw, cost_base=base_sw, cost_ratio=ratio, cost_ratio_band=band, baseline_limit=700)
 np.savez("examples/data/12c.npz", **DATA)
 fig.savefig("examples/figures/12c_after.png", dpi=220); fig.savefig("examples/figures/12c_after.pdf")
 print("saved examples/figures/12c_after.{png,pdf}")

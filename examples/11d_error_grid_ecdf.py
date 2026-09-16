@@ -25,7 +25,7 @@ for j, (name, n, sc) in enumerate(COHORTS):
     for ci, K in enumerate(KS):
         base = np.abs(rng.normal(0, .8 / np.sqrt(K), n) * sc) + 1e-3          # baseline error shrinks with K
         learn = np.abs(rng.normal(0, .045 * sc, n)) * (1 + .3 * rng.standard_t(5, n) ** 2 / 10) + 1e-3
-        DATA[f"baseline_err_cohort{j}_K{K}"] = base; DATA[f"learner_err_cohort{j}_K{K}"] = learn
+        DATA[f"baseline_err_cohort{j}_budget{ci + 1}"] = base; DATA[f"method_err_cohort{j}_budget{ci + 1}"] = learn
         ax = fig.add_axes([x0s[ci], y0s[j], w, h])
         ax.fill_between([1e-3, 1], [1e-3, 1], [1, 1], color="#f4f3f0", lw=0, zorder=0)
         ax.scatter(base, learn, s=3.2, c=BLUE, alpha=.30, linewidths=0, rasterized=True, zorder=3)
@@ -35,12 +35,12 @@ for j, (name, n, sc) in enumerate(COHORTS):
         ax.set_yticks([.01, .1]); ax.set_yticklabels(["0.01", "0.1"] if ci == 0 else [])
         finish(ax)
         if j == 0:
-            ax.set_title(f"$K={K}$", pad=3, fontsize=8.5)
+            ax.set_title(f"budget {ci + 1}", pad=3, fontsize=8.5)
         if ci == 0:
             note(ax, 2.4e-3, .5, name, va="top", size=7.5)
-fig.text(.5, .385, "baseline error per row", ha="center", fontsize=9)
-fig.text(.03, .69, "learner error per row", rotation=90, va="center", fontsize=9)
-note(fig.axes[3], .5, .4, "shaded: learner worse", ha="right", va="top", size=7, color=INK2)
+fig.text(.5, .385, "baseline error per sample", ha="center", fontsize=9)
+fig.text(.03, .69, "method error per sample", rotation=90, va="center", fontsize=9)
+note(fig.axes[3], .5, .4, "shaded: method worse", ha="right", va="top", size=7, color=INK2)
 
 # (b) ECDF row
 yb, hb = .10, .17
@@ -50,7 +50,7 @@ for j, (name, n, sc) in enumerate(COHORTS):
     clean = rng.normal(0, .045 * sc, n) ** 2
     reused = rng.normal(0, .055 * sc, n) ** 2
     repaired = rng.normal(0, .046 * sc, n) ** 2
-    DATA[f"sqerr_baseline_cohort{j}"] = base; DATA[f"sqerr_clean_cohort{j}"] = clean; DATA[f"sqerr_reused_cohort{j}"] = reused; DATA[f"sqerr_repaired_cohort{j}"] = repaired
+    DATA[f"sqerr_baseline_cohort{j}"] = base; DATA[f"sqerr_method_cohort{j}"] = clean; DATA[f"sqerr_method_perturbed_cohort{j}"] = reused; DATA[f"sqerr_method_repaired_cohort{j}"] = repaired
     ecdf(ax, base, GREY_D, ls=(0, (2, 1.5)), lw=1.0)
     ecdf(ax, clean, INK, lw=1.3)
     ecdf(ax, reused, BLUE, lw=1.2)
@@ -60,11 +60,11 @@ for j, (name, n, sc) in enumerate(COHORTS):
     if j > 0:
         ax.set_yticklabels([])
     finish(ax)
-    note(ax, 1.3e-5, .93, f"{name},  $n={n:,}$", size=7.5, va="top")
-fig.axes[-3].set_ylabel("fraction of rows", labelpad=2)
-fig.axes[-2].set_xlabel("squared error per row", labelpad=2)
-fig.legend(handles=[Line2D([], [], color=GREY_D, ls=(0, (2, 1.5)), label="baseline"), Line2D([], [], color=INK, lw=1.3, label="clean learner"),
-                    Line2D([], [], color=BLUE, label="reused learner"), Line2D([], [], color=GREEN_D, label="repaired")],
+    note(ax, 1.3e-5, .93, name, size=7.5, va="top")
+fig.axes[-3].set_ylabel("fraction of samples", labelpad=2)
+fig.axes[-2].set_xlabel("squared error per sample", labelpad=2)
+fig.legend(handles=[Line2D([], [], color=GREY_D, ls=(0, (2, 1.5)), label="baseline"), Line2D([], [], color=INK, lw=1.3, label="method"),
+                    Line2D([], [], color=BLUE, label="method, perturbed"), Line2D([], [], color=GREEN_D, label="method, repaired")],
            loc="lower right", bbox_to_anchor=(.985, .285), ncol=4, fontsize=7.5, handlelength=1.6, columnspacing=1.0, borderaxespad=0)
 fig.text(.03, .955, "(a)", fontsize=11, fontweight="bold", color=INK)
 fig.text(.03, .29, "(b)", fontsize=11, fontweight="bold", color=INK)

@@ -49,14 +49,14 @@ dW = 9e-3 * doses ** 1.6; ci = 0.35 * dW + 2.5e-4
 
 fig = plt.figure(figsize=(180 * MM, 92 * MM))
 cmap = ListedColormap(["#d9e6f7", "#7fa9df", BLUE_D])
-titles = ["clean", "arbitrary", "matched"]
+titles = ["reference", "replacement A", "replacement B"]
 for k, (A, t) in enumerate(zip([clean, arbitrary, matched], titles)):
     ax = fig.add_axes([.055 + k * .115, .35, .10, .55])
     ax.imshow(A, cmap=cmap, aspect="auto", interpolation="nearest")
     if k > 0:
         for r in rows:
             ax.axhspan(r - .5, r + .5, xmin=0, xmax=1, color=ORANGE if k == 2 else INK, alpha=.18, lw=0)
-    ax.set_xticks(range(Q)); ax.set_xticklabels([f"q{i + 1}" for i in range(Q)], fontsize=6.5)
+    ax.set_xticks(range(Q)); ax.set_xticklabels([f"c{i + 1}" for i in range(Q)], fontsize=6.5)
     ax.set_yticks([0, 31, 63]); ax.set_yticklabels(["1", "32", "64"] if k == 0 else [])
     ax.tick_params(length=0); ax.grid(False)
     for s in ax.spines.values():
@@ -75,8 +75,8 @@ for k, (A, t) in enumerate(zip([clean, arbitrary, matched], titles)):
     for s in axc.spines.values():
         s.set_edgecolor(GRID)
 ax0 = fig.axes[0]
-ax0.set_ylabel("setting", labelpad=2)
-fig.text(.055, .265, "axis-pair counts, (q1, q2)", fontsize=7.5, color=INK2)
+ax0.set_ylabel("row", labelpad=2)
+fig.text(.055, .265, "pair counts, columns 1 and 2", fontsize=7.5, color=INK2)
 fig.legend(handles=[Line2D([], [], marker="s", ms=6, lw=0, mfc=c, mec="none", label=l) for c, l in
                     [("#d9e6f7", "X"), ("#7fa9df", "Y"), (BLUE_D, "Z")]],
            loc="lower left", bbox_to_anchor=(.055, .0), ncol=3, fontsize=7, handletextpad=.3, columnspacing=.8, borderaxespad=0)
@@ -87,31 +87,30 @@ lim = (-.27, .27)
 paired_cloud(axb, shared, disjoint, BLUE, identity=True, zero=False, lim=lim)
 paired_cloud(axb, shared, matchedshift, ORANGE, identity=False, zero=True, lim=lim)
 axb.axvline(0, color=INK3, lw=.5, zorder=1)
-axb.set_xlabel("label shift per row, shared shots", labelpad=2)
-axb.set_ylabel("label shift after intervention", labelpad=2)
+axb.set_xlabel("per-sample shift, scheme A", labelpad=2)
+axb.set_ylabel("per-sample shift, other scheme", labelpad=2)
 axb.set_xticks([-.2, 0, .2]); axb.set_yticks([-.2, 0, .2])
 note(axb, .25, .215, "$y=x$", ha="right", size=7.5, color=INK2)
-note(axb, -.25, .235, "fresh shots", size=7.5, color=BLUE_D)
-note(axb, -.25, .19, "composition matched", size=7.5, color=ORANGE_D)
-note(axb, .25, -.245, f"$d={D}$,  {n:,} rows", ha="right", size=7.5)
+note(axb, -.25, .235, "scheme B", size=7.5, color=BLUE_D)
+note(axb, -.25, .19, "scheme C (control)", size=7.5, color=ORANGE_D)
 finish(axb)
 
 # (c) endpoint, smallest and last
 axc = fig.add_axes([.80, .16, .18, .74])
 axc.axhspan(-2e-4, 2e-4, color=GRID, lw=0, zorder=0)
-axc.errorbar(doses * .97, dW, yerr=ci, fmt="o", color=BLUE_D, ms=3.5, lw=.9, capsize=1.2, label="shared")
-axc.errorbar(doses * 1.03, dW * 1.02, yerr=ci, fmt="o", mfc="white", color=BLUE, ms=3.5, lw=.9, capsize=1.2, label="disjoint")
+axc.errorbar(doses * .97, dW, yerr=ci, fmt="o", color=BLUE_D, ms=3.5, lw=.9, capsize=1.2, label="scheme A")
+axc.errorbar(doses * 1.03, dW * 1.02, yerr=ci, fmt="o", mfc="white", color=BLUE, ms=3.5, lw=.9, capsize=1.2, label="scheme B")
 axc.plot(doses, dW, color=BLUE_D, lw=.8, alpha=.6)
 axc.set_yscale("symlog", linthresh=5e-4); axc.set_xscale("log")
-axc.set_xticks(doses); axc.set_xticklabels(["3/64", "6/64", "1/4", "1/2", "1"], fontsize=7)
-axc.set_xlabel("fraction of borrowed settings", labelpad=2)
-axc.set_ylabel(r"pooled increment $\Delta W$", labelpad=2)
+axc.set_xticks(doses); axc.set_xticklabels(["", "", "", "", ""], fontsize=7)
+axc.set_xlabel("dose (log)", labelpad=2)
+axc.set_ylabel("pooled statistic", labelpad=2)
 axc.legend(loc="upper left", fontsize=7, handletextpad=.3, borderaxespad=.2)
 finish(axc)
 
 letter(fig, ax0, "a", dx=-.04, dy=.04); letter(fig, axb, "b", dx=-.07); letter(fig, axc, "c", dx=-.07)
-np.savez("examples/data/11a.npz", clean_axes=clean, arbitrary_axes=arbitrary, matched_axes=matched, replaced_rows=rows,
-         shift_shared=shared, shift_disjoint=disjoint, shift_matched=matchedshift, dose_fraction=doses, dW=dW, dW_ci=ci)
+np.savez("examples/data/11a.npz", reference_matrix=clean, replacementA_matrix=arbitrary, replacementB_matrix=matched, replaced_rows=rows,
+         shift_schemeA=shared, shift_schemeB=disjoint, shift_schemeC=matchedshift, dose=doses, pooled_stat=dW, pooled_stat_ci=ci)
 fig.savefig("examples/figures/11a_after.png", dpi=220)
 fig.savefig("examples/figures/11a_after.pdf")
 print("saved examples/figures/11a_after.{png,pdf}")

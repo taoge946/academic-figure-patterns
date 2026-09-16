@@ -27,20 +27,19 @@ im = axa.pcolormesh(np.arange(len(overlap) + 1) - .5, np.arange(len(budget) + 1)
 # prediction contour (zero crossing of the model) on the same grid, no fit
 cs = axa.contour(np.arange(len(overlap)), np.arange(len(budget)), true, levels=[0], colors=[INK], linewidths=1.3, linestyles="--")
 axa.set_xticks(np.arange(0, 21, 5)); axa.set_xticklabels(["0", "0.25", "0.5", "0.75", "1"])
-axa.set_yticks(np.arange(len(budget))); axa.set_yticklabels([str(b) for b in budget])
-axa.set_xlabel("fraction of borrowed settings", labelpad=2); axa.set_ylabel("shots per setting", labelpad=2)
+axa.set_yticks(np.arange(len(budget))); axa.set_yticklabels([str(i + 1) for i in range(len(budget))])
+axa.set_xlabel("parameter 1", labelpad=2); axa.set_ylabel("parameter 2", labelpad=2)
 axa.tick_params(length=0); axa.grid(False)
 for s in axa.spines.values():
     s.set_edgecolor(GRID)
-note(axa, 4.3, 8.0, "prediction: zero increment", size=7.5, color=INK, va="center")
-fig.text(.57, .93, "each cell: one measured setting; n = 1,600 rows", fontsize=7, color=INK2, ha="right", va="bottom")
+note(axa, 4.3, 8.0, "prediction: zero crossing", size=7.5, color=INK, va="center")
 cax = fig.add_axes([.07, .885, .25, .025])
 cb = fig.colorbar(im, cax=cax, orientation="horizontal", ticks=[-.2, 0, .2, .4, .6]); cb.ax.tick_params(length=2, labelsize=7)
-cb.ax.set_title(r"witness increment $\Delta W$  ($10^{-2}$)", fontsize=7.5, pad=2, loc="left")
+cb.ax.set_title("measured quantity", fontsize=7.5, pad=2, loc="left")
 for s in cb.ax.spines.values():
     s.set_visible(False)
 # two line cuts
-for k, (irow, c, cd, lab) in enumerate([(1, ORANGE, ORANGE_D, "8 shots"), (5, BLUE, BLUE_D, "128 shots")]):
+for k, (irow, c, cd, lab) in enumerate([(1, ORANGE, ORANGE_D, "cut A"), (5, BLUE, BLUE_D, "cut B")]):
     axa.plot([-.5, 20.5], [irow, irow], color=cd, lw=.9, ls=(0, (2, 2)), zorder=5)
     ax = fig.add_axes([.68, .58 - k * .42, .30, .34])
     y = meas[irow]; e = np.full_like(y, .02) * (1 + rng.uniform(0, .6, len(y)))
@@ -54,10 +53,10 @@ for k, (irow, c, cd, lab) in enumerate([(1, ORANGE, ORANGE_D, "8 shots"), (5, BL
     zero = overlap[np.argmin(np.abs(true[irow]))]
     ax.axvline(zero, color=cd, lw=.7, ls=":"); note(ax, zero + .02, -.22, "crossing", size=7, color=INK2)
     if k == 1:
-        ax.set_xlabel("fraction of borrowed settings", labelpad=2)
+        ax.set_xlabel("parameter 1", labelpad=2)
     if k == 0:
-        ax.set_ylabel(r"$\Delta W$  ($10^{-2}$)", labelpad=2)
+        ax.set_ylabel("measured quantity", labelpad=2)
 fig.text(.015, .93, "(a)", fontsize=11, fontweight="bold", color=INK); letter(fig, fig.axes[-2], "b", dx=-.07); letter(fig, fig.axes[-1], "c", dx=-.07)
-np.savez("examples/data/12e.npz", overlap_fraction=overlap, shots_per_setting=budget, measured=meas, model=true)
+np.savez("examples/data/12e.npz", parameter1=overlap, parameter2=budget, measured=meas, model=true)
 fig.savefig("examples/figures/12e_after.png", dpi=220); fig.savefig("examples/figures/12e_after.pdf")
 print("saved examples/figures/12e_after.{png,pdf}")

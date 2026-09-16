@@ -1,38 +1,42 @@
-"""11d: learner vs baseline mean error vs budget K, and squared error of four predictors."""
 import numpy as np
 import matplotlib.pyplot as plt
 
 d = np.load("examples/data/11d.npz")
-Ks = [8, 32, 128, 1024]
 cohorts = [0, 1, 2]
+budgets = [1, 2, 3, 4]
 
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 
+# Left: mean absolute error vs budget, method vs baseline, one line per cohort
+ax = axes[0]
 for j in cohorts:
-    base = [d[f"baseline_err_cohort{j}_K{K}"].mean() for K in Ks]
-    learn = [d[f"learner_err_cohort{j}_K{K}"].mean() for K in Ks]
-    ax1.plot(Ks, base, "o--", label=f"baseline, cohort {j}")
-    ax1.plot(Ks, learn, "s-", label=f"learner, cohort {j}")
-ax1.set_xscale("log")
-ax1.set_yscale("log")
-ax1.set_xlabel("budget K")
-ax1.set_ylabel("mean absolute error")
-ax1.set_title("Error vs budget")
-ax1.legend(fontsize=8)
-ax1.grid(True, which="both", alpha=0.3)
+    base = [d[f"baseline_err_cohort{j}_budget{b}"].mean() for b in budgets]
+    meth = [d[f"method_err_cohort{j}_budget{b}"].mean() for b in budgets]
+    ax.plot(budgets, base, "o--", label=f"Baseline, cohort {j}")
+    ax.plot(budgets, meth, "s-", label=f"Method, cohort {j}")
+ax.set_xlabel("Budget level")
+ax.set_ylabel("Mean absolute error")
+ax.set_title("Method vs baseline error across budgets")
+ax.set_xticks(budgets)
+ax.legend(fontsize=7)
+ax.grid(True)
 
-preds = ["baseline", "clean", "reused", "repaired"]
+# Right: mean squared error of four predictors per cohort (one budget)
+ax = axes[1]
+preds = [("sqerr_baseline", "Baseline"), ("sqerr_method", "Method"),
+         ("sqerr_method_perturbed", "Method (perturbed)"), ("sqerr_method_repaired", "Method (repaired)")]
+x = np.arange(len(cohorts))
 w = 0.2
-for i, p in enumerate(preds):
-    arrs = [d[f"sqerr_{p}_cohort{j}"] for j in cohorts]
-    vals = [a.mean() for a in arrs]
-    errs = [a.std() / np.sqrt(len(a)) for a in arrs]
-    ax2.bar(np.array(cohorts) + (i - 1.5) * w, vals, w, yerr=errs, capsize=2, label=p)
-ax2.set_xticks(cohorts)
-ax2.set_xticklabels([f"cohort {j}" for j in cohorts])
-ax2.set_ylabel("mean squared error")
-ax2.set_title("Four predictors at one budget")
-ax2.legend()
+for i, (key, label) in enumerate(preds):
+    vals = [d[f"{key}_cohort{j}"].mean() for j in cohorts]
+    errs = [d[f"{key}_cohort{j}"].std() / np.sqrt(len(d[f"{key}_cohort{j}"])) for j in cohorts]
+    ax.bar(x + (i - 1.5) * w, vals, w, yerr=errs, capsize=2, label=label)
+ax.set_xticks(x)
+ax.set_xticklabels([f"Cohort {j}" for j in cohorts])
+ax.set_ylabel("Mean squared error")
+ax.set_title("Squared error of four predictors")
+ax.legend(fontsize=8)
 
-fig.tight_layout()
-fig.savefig("examples/figures/11d_before.png", dpi=150)
+plt.tight_layout()
+plt.savefig("examples/figures/11d_before.png", dpi=150)
+print("saved examples/figures/11d_before.png")

@@ -15,8 +15,8 @@ from afp.evidence import (evidence_style, finish, letter, note, peak_normalized_
 rng = np.random.default_rng(3)
 evidence_style()
 DATA = {}
-COHORTS = [("cohort A, development", 1600), ("cohort B, sealed", 1600), ("cohort C, sealed", 1000)]
-CONDS = [("condition 1", 1.0), ("condition 2", 1.5), ("control (matched)", 0.18)]
+COHORTS = [("cohort A", 1600), ("cohort B", 1600), ("cohort C", 1000)]
+CONDS = [("condition 1", 1.0), ("condition 2", 1.5), ("control", 0.18)]
 sd_P, sd_Q = 0.040, 0.013
 
 fig = plt.figure(figsize=(180 * MM, 98 * MM))
@@ -37,10 +37,10 @@ for j, (name, n) in enumerate(COHORTS):
         ax.set_xticks([-.2, -.1, 0, .1, .2]); ax.set_xticklabels(["−0.2", "−0.1", "0", "0.1", "0.2"] if j == 2 else [])
         finish(ax)
         if ci == 0:
-            note(ax, edges[0], 1.27, f"{name}  ·  {n:,} rows", va="top", size=8, color=INK)
+            note(ax, edges[0], 1.27, name, va="top", size=8, color=INK)
         if j == 0:
             ax.set_title(cname, pad=5, fontsize=9)
-axes[(1, 2)].set_xlabel(r"learner shift per row,  $\delta f = f_{\rm cond} - f_{\rm clean}$", labelpad=2)
+axes[(1, 2)].set_xlabel("per-sample shift of the prediction", labelpad=2)
 
 # (d) exceedance of the clean residual
 xs = np.linspace(0, 0.3, 301)
@@ -59,13 +59,13 @@ for j, (name, n) in enumerate(COHORTS):
     ax.axvline(.1, color=GRID, lw=.6, zorder=1)
     finish(ax)
     if j == 0:
-        ax.set_title("clean data", pad=5, fontsize=9)
-axes[(3, 1)].set_ylabel("fraction of rows above", labelpad=2)
-axes[(3, 2)].set_xlabel(r"clean residual  $|f_{\rm clean}-Y|$", labelpad=2)
+        ax.set_title("clean", pad=5, fontsize=9)
+axes[(3, 1)].set_ylabel("fraction of samples above", labelpad=2)
+axes[(3, 2)].set_xlabel("residual", labelpad=2)
 
 fig.legend(handles=[Line2D([], [], color=BLUE_D, lw=6, alpha=.45, label="estimator P"),
                     Line2D([], [], color=GREEN_D, lw=6, alpha=.45, label="estimator Q"),
-                    Line2D([], [], color=GREY_D, lw=.9, ls=(0, (2, 1.5)), label="training mean, (d)")],
+                    Line2D([], [], color=GREY_D, lw=.9, ls=(0, (2, 1.5)), label="reference, (d)")],
            loc="upper right", bbox_to_anchor=(.985, .998), ncol=3, fontsize=8, handlelength=1.4, handletextpad=.4, columnspacing=1.0, borderaxespad=0)
 for ci, ch in enumerate("abcd"):
     fig.text(x0s[ci] - .04, .905, f"({ch})", fontsize=11, fontweight="bold", va="bottom", color=INK)

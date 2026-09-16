@@ -6,7 +6,7 @@ Nine datasets, each drawn twice from the **same `.npz` file** (`examples/data/`,
   data the way you normally would" (`examples/before_<id>.py`, default matplotlib).
 - **after** — drawn with the rules in `docs/SPEC_FIRST.md` and `docs/FORM_LADDER.md` (`examples/11*.py`, `examples/12*.py`).
 
-All numbers are synthetic, so no result values are printed inside the panels; the forms are the ones a
+All numbers are synthetic, so no result values and no experimental settings are printed inside the panels (labels are generic: scheme A/B, cohort, budget, task); the forms are the ones a
 corresponding author accepted after rejecting the summary-only versions (`docs/CASE_STUDIES_AUTHOR_REVIEW.md`).
 Run any script from the repository root with `PYTHONPATH=. python examples/<script>.py`.
 
@@ -17,7 +17,7 @@ Run any script from the repository root with `PYTHONPATH=. python examples/<scri
 | **11c** mechanism cloud with compressed control | ![](figures/11c_before.png) | ![](figures/11c_after.png) |
 | **11d** error-vs-error grid + ECDF row | ![](figures/11d_before.png) | ![](figures/11d_after.png) |
 | **12a** joint cloud, contours, marginals + decomposition | ![](figures/12a_before.png) | ![](figures/12a_after.png) |
-| **12b** ML hero: scaling with an OOM wall | ![](figures/12b_before.png) | ![](figures/12b_after.png) |
+| **12b** ML hero: scaling with a baseline-failure region | ![](figures/12b_before.png) | ![](figures/12b_after.png) |
 | **12c** systems sweep (MICRO / ASPLOS look) | ![](figures/12c_before.png) | ![](figures/12c_after.png) |
 | **12d** ridges + parameter-free prediction + resolution | ![](figures/12d_before.png) | ![](figures/12d_after.png) |
 | **12e** measured parameter heat map + prediction contour | ![](figures/12e_before.png) | ![](figures/12e_after.png) |
@@ -43,8 +43,8 @@ Both columns are honest plots of the same arrays. The difference is what a reade
 | `11c_mechanism_cloud.py` | per-sample effect vs nameable mechanism variable, three sizes on one curve; binned medians + IQR; control strip (3 + 5) | physics |
 | `11d_error_grid_ecdf.py` | 3 × 4 log–log error-vs-error clouds drifting across the diagonal with budget; ECDF row (4) | physics |
 | `12a_joint_cloud_marginals.py` | joint cloud of two defect types with 25 % / 60 % contours and marginals; decomposition bars with bias below; contour small multiples | physics, npj letters |
-| `12b_hero_scaling.py` | runtime + memory vs size on twin log axes, baseline OOM band, gap arrows; speedup vs size with 1× line | ICML / NeurIPS |
-| `12c_systems_sweep.py` | per-device survival with the gap filled; SWAP count vs depth with ratio band on a twin axis and a timeout wall | MICRO / ASPLOS |
+| `12b_hero_scaling.py` | runtime + memory vs size on twin log axes, baseline-failure band, gap arrows; speedup vs size with 1× line | ICML / NeurIPS |
+| `12c_systems_sweep.py` | per-device metric with the gap filled; cost vs input size with a ratio band on a twin axis and a baseline-limit wall | MICRO / ASPLOS |
 | `12d_ridge_prediction_resolution.py` | stacked ridges control vs defect; ratio vs noise floor with simulated cohorts, measured cohorts and two prediction lines; resolution panel | physics |
 | `12e_parameter_heatmap.py` | heat map of a measured quantity over a 2-D grid with the theory zero-crossing as a contour; two line cuts | PRX Quantum corpus form |
 

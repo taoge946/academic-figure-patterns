@@ -28,7 +28,7 @@ def smooth_density(v, lim, bins=70, sigma=2.0):
 fig = plt.figure(figsize=(180 * MM, 75 * MM))
 # ---------- (a) ridges ----------
 axa = fig.add_axes([.05, .14, .27, .78]); lim = (-.45, .45)
-rows = [("12 sessions · 36 states", 36, .11, .12), ("24 sessions · 71 states", 71, .075, .09), ("108 sessions · 320 states", 320, .034, .09)]
+rows = [("small cohort", 36, .11, .12), ("medium cohort", 71, .075, .09), ("large cohort", 320, .034, .09)]
 for i, (lab, n, sc, sd) in enumerate(rows):
     y0 = (2 - i) * 1.15
     ctrl = rng.normal(0, sc, n * 5); dft = rng.normal(-.03, sd, n * 5)
@@ -39,8 +39,8 @@ for i, (lab, n, sc, sd) in enumerate(rows):
     axa.text(lim[0] + .01, y0 + .99, lab, fontsize=7.5, color=INK, va="bottom")
 axa.axvline(0, color=INK3, lw=.6, zorder=1)
 axa.set_xlim(*lim); axa.set_ylim(-.05, 4.05); axa.set_yticks([]); axa.spines["left"].set_visible(False)
-axa.set_xticks([-.4, -.2, 0, .2, .4]); axa.set_xlabel(r"learner shift per state,  $\delta f(X)$", labelpad=2)
-axa.legend(handles=[Line2D([], [], color=GREY_D, lw=6, alpha=.5, label="control: two clean learners"), Line2D([], [], color=BLUE_D, lw=6, alpha=.5, label="defect: record reuse")],
+axa.set_xticks([-.4, -.2, 0, .2, .4]); axa.set_xlabel("model shift per sample", labelpad=2)
+axa.legend(handles=[Line2D([], [], color=GREY_D, lw=6, alpha=.5, label="control"), Line2D([], [], color=BLUE_D, lw=6, alpha=.5, label="defect")],
            loc="upper left", bbox_to_anchor=(0, 1.0), fontsize=7, handlelength=1.2, borderaxespad=0, labelspacing=.25)
 finish(axa)
 
@@ -57,9 +57,9 @@ for lab, xh, yh, e, mk, (dx, dy) in hw:
     axb.text(xh * 10 ** dx, yh + dy, f"cohort {lab}", fontsize=7, color=INK2, ha="left" if dx > 0 else "right")
 axb.set_xscale("log"); axb.set_xlim(7e-3, 1.05); axb.set_ylim(-.6, 1.15)
 axb.axhline(0, color=INK3, lw=.6); axb.axhline(1, color=GRID, lw=.6)
-axb.set_xlabel(r"$x=v_0/\Delta W$  (noise floor over witness)", labelpad=2); axb.set_ylabel(r"price ratio  $\Delta R/\Delta W$", labelpad=2)
+axb.set_xlabel("noise floor  $x$", labelpad=2); axb.set_ylabel("ratio", labelpad=2)
 note(axb, .02, -.35, "prediction, no fit:  $1-2x$", size=7.5, color=INK); note(axb, .25, .85, "$1-x$", size=7.5, color=INK3)
-note(axb, 8e-3, -.55, "light points: simulated cohorts, one per draw", size=7, color=BLUE_D, va="bottom")
+note(axb, 8e-3, -.55, "light points: simulated", size=7, color=BLUE_D, va="bottom")
 finish(axb)
 
 # ---------- (c) resolution panel ----------
@@ -73,13 +73,13 @@ for i in range(6):
 axc.errorbar(xc, dft_m, yerr=dft_e, fmt="o", color=BLUE_D, ms=4.5, lw=1.1, capsize=0, zorder=4)
 axc.axhline(1, color=INK3, lw=.6, ls=":"); axc.axhline(0, color=INK3, lw=.6)
 axc.set_xticks(xc); axc.set_xticklabels(list("ABCDEF"), fontsize=7.5); axc.set_ylim(-1.2, 1.25)
-axc.set_ylabel(r"$\Delta R$ in units of $\Delta W$", labelpad=2)
-note(axc, 5.3, 1.03, "full price", size=7, color=INK2, ha="right", va="bottom")
-axc.legend(handles=[Line2D([], [], color=GRID, lw=8, label="zero-defect control"), Line2D([], [], marker="o", lw=0, color=BLUE_D, ms=4.5, label="record reuse")],
+axc.set_ylabel("normalized effect", labelpad=2)
+note(axc, 5.3, 1.03, "full effect", size=7, color=INK2, ha="right", va="bottom")
+axc.legend(handles=[Line2D([], [], color=GRID, lw=8, label="control"), Line2D([], [], marker="o", lw=0, color=BLUE_D, ms=4.5, label="defect")],
            loc="lower left", fontsize=7, handlelength=1.2, borderaxespad=0)
 finish(axc)
 letter(fig, axa, "a", dx=-.04, style="bold"); letter(fig, axb, "b", dx=-.06, style="bold"); letter(fig, axc, "c", dx=-.07, style="bold")
-DATA.update(sim_x=sim_x, sim_ratio=sim_y, hw_x=np.array([h[1] for h in hw]), hw_ratio=np.array([h[2] for h in hw]), hw_err=np.array([h[3] for h in hw]),
+DATA.update(sim_x=sim_x, sim_ratio=sim_y, measured_x=np.array([h[1] for h in hw]), measured_ratio=np.array([h[2] for h in hw]), measured_err=np.array([h[3] for h in hw]),
             resolution_control_lo=ctrl_lo, resolution_control_hi=ctrl_hi, resolution_defect=dft_m, resolution_defect_err=dft_e)
 np.savez("examples/data/12d.npz", **DATA)
 fig.savefig("examples/figures/12d_after.png", dpi=220); fig.savefig("examples/figures/12d_after.pdf")
