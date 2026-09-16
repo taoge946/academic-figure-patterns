@@ -2,8 +2,9 @@
 
 Nine datasets, each drawn twice from the **same `.npz` file** (`examples/data/`, described in `data/DATA_README.md`):
 
-- **before** — drawn by an agent with no context and no access to this repository's rules, asked only to "show the
-  data the way you normally would" (`examples/before_<id>.py`, default matplotlib).
+- **before** — the five-minute look at the data: one panel, one basic chart type (bar, line or scatter), matplotlib
+  defaults, means where aggregation is needed, no error bars, no reference lines, no annotations
+  (`examples/before_<id>.py`, drawn by an agent that was given only the data description and these constraints).
 - **after** — drawn with the rules in `docs/SPEC_FIRST.md` and `docs/FORM_LADDER.md` (`examples/11*.py`, `examples/12*.py`).
 
 All numbers are synthetic, so no result values and no experimental settings are printed inside the panels (labels are generic: scheme A/B, cohort, budget, task); the forms are the ones a
