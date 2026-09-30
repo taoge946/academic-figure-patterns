@@ -31,7 +31,6 @@ A rule review. Some advice was stronger than its evidence, and one piece broke a
 ### Added
 - `tests/`: numeric tests for `afp.evidence`, style setup without LaTeX, every example script run headless,
   and the synthetic data behind the example figures compared with the committed `.npz` files.
-- GitHub Actions workflow running the tests.
 - `README_zh.md`: Chinese overview (method, gallery, install, rule tiers, pattern index); linked from the
   English README.
 - README: install from GitHub (the package is not on PyPI yet), the four spec questions near the top, LaTeX
