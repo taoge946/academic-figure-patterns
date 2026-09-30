@@ -2,6 +2,8 @@
 
 **Design patterns for publication-quality academic figures — focused on *content*, not just aesthetics.**
 
+**English** | [中文](README_zh.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
@@ -9,9 +11,22 @@
 
 ## The Problem
 
-Most plotting tutorials teach you *how to use matplotlib*. This project teaches you **what to put in your figures** to make them publication-ready for top venues (NeurIPS, ICML, ICLR, Nature, etc.).
+Most plotting tutorials teach you *how to use matplotlib*. This project helps you decide **what evidence to put
+in a figure, and why** — for top venues (NeurIPS, ICML, ICLR, Nature, APS journals, etc.).
 
 The difference between an undergraduate thesis figure and a top-venue figure is **not** fonts or colors — it's **content design**: what data to show, how to organize comparisons, what annotations guide the reader's eye, and how the figure tells a story without words.
+
+**The method in one minute.** Before writing any plotting code, answer four questions per panel
+([Spec First](docs/SPEC_FIRST.md)):
+
+1. **Claim** — what should the reader conclude with the caption covered?
+2. **Comparison** — what is compared against what? No comparison, no panel.
+3. **Encoding** — which visual form makes that comparison readable at a glance?
+4. **Counterfactual** — what would the panel look like if the claim were false? If you can't say, the panel
+   isn't testing anything.
+
+Then pick the form from the [pattern library](#the-pattern-library), and keep it honest
+([which rules are requirements](docs/RULE_STRENGTH.md)).
 
 ## Before → After: the same data, drawn twice
 
@@ -74,17 +89,26 @@ AFP answers questions like:
 
 ### Install
 
+Not on PyPI yet; install from GitHub:
+
 ```bash
-pip install academic-figure-patterns          # core only
-pip install academic-figure-patterns[full]    # with SciencePlots + tueplots
+pip install "academic-figure-patterns @ git+https://github.com/taoge946/academic-figure-patterns"
+# with SciencePlots + tueplots:
+pip install "academic-figure-patterns[full] @ git+https://github.com/taoge946/academic-figure-patterns"
+
+# or, to run the examples and tests:
+git clone https://github.com/taoge946/academic-figure-patterns.git
+cd academic-figure-patterns && pip install -e ".[dev]"
 ```
+
+LaTeX is optional: `setup_style()` uses it only when it is installed (`usetex=True/False` to force).
 
 ### Use in your code
 
 ```python
 from afp import setup_style, get_method_colors, save_fig
 
-# One line to set up venue-specific style (integrates SciencePlots + tueplots)
+# One line to set up venue-specific style (integrates SciencePlots + tueplots; LaTeX optional)
 TEXTWIDTH, COLWIDTH = setup_style(venue='icml')
 
 # Your method always gets the prominent color
@@ -161,7 +185,7 @@ Advanced techniques with complete code:
 | # | Technique | Replaces |
 |---|-----------|---------|
 | 01 | [Inset Zoom](techniques/01_inset_zoom.md) | Squinting at convergence regions |
-| 02 | [Broken Axis](techniques/02_broken_axis.md) | Misleading y-axis truncation |
+| 02 | [Broken Axis](techniques/02_broken_axis.md) | One outlier squashing the rest (not narrow-range bars) |
 | 03 | [Annotations](techniques/03_annotations.md) | Bare plots with no story |
 | 04 | [Complex Layouts](techniques/04_complex_layouts.md) | Single-panel syndrome |
 | 05 | [Waterfall Chart](techniques/05_waterfall.md) | Plain bars for ablation |
@@ -212,14 +236,14 @@ Things that instantly mark your figure as amateur:
 | # | Anti-Pattern | Fix |
 |---|-------------|-----|
 | AP-01 | Bare minimum (just 3 bars) | Add what the comparison needs: intervals, a null reference, per-sample data where it exists |
-| AP-02 | No context (only your method) | Add ≥3 baselines + ≥2 datasets |
+| AP-02 | No context (only your method) | Add the baselines a reviewer expects, and a second dataset or metric where possible |
 | AP-03 | Form doesn't match the question | Pick the form for the question (a plain dot plot is often right) |
 | AP-04 | Silent figure (no story) | One claim per figure + annotate key finding |
 | AP-05 | Truncated bar axis | Bars start at 0; for narrow ranges use dots or a difference plot |
 | AP-11 | Wrong scale (linear for 3 orders) | Log-log for power laws; semi-log for exponentials |
 | AP-12 | Single panel syndrome | Add test panel, different dataset, or different metric |
 | AP-13 | No reference lines | Add random chance / human / SOTA / theoretical bound |
-| AP-14 | Caption describes, not concludes | First sentence = takeaway, not "Figure X shows..." |
+| AP-14 | Caption describes, not concludes | ML venues: first sentence = takeaway. APS: the caption describes ([Venue Rules](docs/VENUE_RULES.md)) |
 
 See [full anti-pattern list](docs/ANTI_PATTERNS.md) for all 21 with examples; AP-15 to AP-21 come from author review of real manuscripts.
 
@@ -268,8 +292,20 @@ from afp import (
     add_shaded_region,    # Highlight performance band
     add_inset_zoom,       # Magnify convergence region
     sorted_bar_data,      # Sort by value (sorting = narrative)
+
+    # Per-sample evidence (Pattern 11)
+    structure_strength,   # Check a form's structure numerically *before* drawing it
+    paired_cloud,         # Per-sample x-y cloud with identity / zero reference lines
+    binned_median,        # Binned medians with an IQR band
+    peak_normalized_hist, # Overlaid distributions on one grid, scaled to unit peak
+    ecdf,                 # Empirical CDF
+    exceedance_curve,     # Fraction of samples above x (read the tails on log y)
+    fraction_below_diagonal,  # Share of samples where the y-axis method has the smaller error
 )
 ```
+
+Style helpers for the per-sample figures (`evidence_style`, `letter`, `note`, `finish`, palette constants) live in
+`afp.evidence`; see the scripts in `examples/` for complete figures.
 
 ## Supported Venues
 
