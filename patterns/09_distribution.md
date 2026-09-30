@@ -30,15 +30,19 @@ for i, (method, mean) in enumerate(means.items()):
     ax.hlines(mean, i-0.2, i+0.2, color='black', lw=2)
     ax.text(i+0.25, mean, f'{mean:.1f}', fontsize=8, va='center')
 
-# Statistical test results
+# Effect size with its interval, not only a p-value
 from scipy.stats import mannwhitneyu
-_, p = mannwhitneyu(data_ours, data_baseline, alternative='greater')
-significance = '***' if p < 0.001 else '**' if p < 0.01 else '*' if p < 0.05 else 'n.s.'
-# Draw significance bracket
-y_max = df['metric'].max() * 1.05
-ax.plot([0, 0, 1, 1], [y_max, y_max*1.02, y_max*1.02, y_max], 'k-', lw=1)
-ax.text(0.5, y_max*1.03, significance, fontsize=12, ha='center')
+stat, p = mannwhitneyu(data_ours, data_baseline, alternative='two-sided')
+effect = stat / (len(data_ours) * len(data_baseline))   # P(ours > baseline), 0.5 = no difference
+# report e.g. "P(ours > baseline) = 0.71, Mann-Whitney U two-sided p = 0.003, n = 40 vs 40"
+# in the caption; if you print a marker in the figure, the caption must say which test, n, and
+# how multiple comparisons were corrected (e.g., Holm across all pairs shown).
 ```
+Notes:
+- Use a two-sided test unless the direction was fixed before looking at the data.
+- If the same instances are run by both methods, the data are paired: test and plot the per-instance
+  difference (Structure B), not two independent groups.
+- Stars alone hide the effect size; a tiny, useless difference is "***" with enough samples.
 
 ### Structure B: Box Plot + Pairwise Comparison
 ```
@@ -74,9 +78,9 @@ ax.set_ylabel('Cumulative Fraction of Instances')
 
 relative = (data - data.max(axis=0)) / data.max(axis=0) * 100
 sns.heatmap(relative, annot=data, fmt='.1f',
-            cmap='RdYlGn', center=0,
+            cmap='viridis',            # all values are <= 0: sequential, colorblind-safe
             linewidths=0.5, linecolor='white')
-# Green = close to best, Red = large gap
+# Bright = close to best, dark = large gap (avoid red-green maps: ~8% of male readers can't separate them)
 # Numbers show raw values; colors show relative gaps
 ```
 
@@ -96,7 +100,8 @@ sns.heatmap(relative, annot=data, fmt='.1f',
 ## Required Elements
 
 1. **Full distributions**: Violin / box / CDF -- not just mean +/- std
-2. **Statistical tests**: p-value and significance markers
+2. **Size of the difference with its uncertainty**: effect size + interval; a test (named, with n and
+   multiple-comparison correction) where the claim is "significantly different"
 3. **Individual data points**: Strip / swarm plot showing raw data
 4. **Reference lines**: Mark key thresholds or baseline performance levels
 5. **Sample size annotations**: n = ? next to each group or in the caption
@@ -104,7 +109,8 @@ sns.heatmap(relative, annot=data, fmt='.1f',
 ## Anti-Patterns
 
 - Do not report only mean +/- std without showing the distribution shape
-- Do not claim "significantly better" without a statistical test
+- Do not claim "significantly better" without a statistical test, and do not let a star stand in for the
+  size of the difference
 - Do not use box plots without specifying what the whiskers represent
 - Do not substitute bar charts + error bars for violin plots (this hides the distribution shape)
 - Do not draw distribution plots with very small sample sizes (n < 5)

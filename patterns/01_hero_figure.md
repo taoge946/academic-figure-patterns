@@ -49,7 +49,10 @@ The "elevator pitch" of the paper -- enables reviewers to grasp the contribution
 ## Required Elements
 
 1. **Visual comparison**: Do not show only your method -- a reference point for comparison is mandatory
-2. **Key numbers**: At least one impressive quantitative result displayed directly on the figure
+2. **Key number**: The one quantitative result the claim rests on, printed on the figure together with what
+   it is compared against and its uncertainty or setting (e.g., "8.2x faster than X at n = 10^4, same hardware").
+   Pick the number that carries the claim, not the most flattering one; the main text must be able to back it
+   with the full comparison
 3. **Semantic color coding**: Your method uses a prominent color (red/orange); baselines use muted colors (gray/blue) -- maintain consistency throughout the entire paper
 4. **Minimal text**: The figure should be understandable without reading the main text
 5. **Annotations / arrows**: Highlight where the key differences lie -- do not force reviewers to find them

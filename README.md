@@ -116,6 +116,12 @@ colors = get_method_colors(['GNN', 'Transformer', 'Ours'])
 # → {'GNN': '#348ABD', 'Transformer': '#988ED5', 'Ours': '#E24A33'}
 ```
 
+### Using it with an AI assistant
+
+Point the assistant at [SKILL.md](SKILL.md): a short entry file with the workflow (data → spec → pattern →
+numeric check → draw → self-check), the hard integrity rules, and which document to read at each step. It also
+works as a Claude Code skill (copy or symlink the repository into your skills directory).
+
 ### Read the patterns
 
 The real value is in the pattern library. Start here:

@@ -121,6 +121,10 @@ def annotate_gap(ax, x1, y1, x2, y2, text, color=None):
 def significance_bracket(ax, x1, x2, y, text='*', h=0.02):
     """Draw a statistical significance bracket between two bars.
 
+    A marker alone hides the size of the difference; prefer plotting the difference with its interval
+    (patterns/02_main_comparison.md). If you use this, the caption must name the test, n, and the
+    multiple-comparison correction.
+
     Args:
         ax: matplotlib Axes
         x1, x2: X-coordinates of the two bars

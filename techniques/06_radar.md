@@ -61,9 +61,24 @@ radar_chart(ax,
     })
 ```
 
+## Before You Use It
+
+Radar charts distort, so they are a last resort for a main figure:
+- **Area grows with the square of the values** and the eye reads area: a method 20% better on every axis
+  looks ~44% bigger.
+- **The shape depends on the axis order.** Reorder the metrics and the "winner's" polygon changes; the
+  area comparison can even flip.
+- **The radius must start at 0.** A radius starting at 70 turns small gaps into large polygons (the
+  0.1 `01_after` example did this; it was replaced by dot plots in 0.2.1).
+
+Usually clearer: a dot plot per metric (small multiples, shared axis per metric), or a difference plot
+ours − baseline per metric. Keep the radar for a qualitative "profile" overview in a supplement or a hero
+sketch, with the numbers in a table.
+
 ## Best Practices
 - **Normalize metrics**: All metrics must be on the same scale (0--100 or 0--1); otherwise the area is meaningless
 - **Align metric direction**: All metrics must follow "higher is better." For "lower is better" metrics (e.g., latency), invert them or use 1/x
 - **Use 4--8 metrics**: Fewer is better served by a bar chart; more causes visual clutter
 - **No more than 4 methods**: Otherwise overlapping lines become illegible
-- **Annotate key values**: Label specific numbers on the dimensions where your method wins the most
+- **Annotate key values**: Label the numbers the claim depends on, including where your method loses
+- **Fix the axis order before looking at the result** (e.g., the order used in the paper's table)

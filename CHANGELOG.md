@@ -27,10 +27,18 @@ A rule review. Some advice was stronger than its evidence, and one piece broke a
   labelled a teaching contrast, not a benchmark; related projects listed with a license note.
 - Pattern 02, 11: "when not to use" sections. Pattern 03: order dependence and spread of waterfall steps.
   Checklist C2 is now "simplest sufficient form"; E5 "annotations true of the data" added.
+- Leftovers from 0.1 that contradicted the integrity rules: Pattern 02's bar + radar layout and "ours last
+  = strongest impression" comment, its significance-star snippet (now: the difference with a bootstrap CI);
+  Pattern 09's star bracket (now: effect size + named test, n, correction) and red-green heat map; Pattern
+  01's "impressive number" (now: the number the claim rests on, with its comparison); CLAIM_TO_PATTERN's
+  bar + radar recommendation; radar-chart distortion caveats; `significance_bracket` docstring.
 
 ### Added
 - `tests/`: numeric tests for `afp.evidence`, style setup without LaTeX, every example script run headless,
   and the synthetic data behind the example figures compared with the committed `.npz` files.
+- `SKILL.md`: entry point for AI assistants — workflow, Tier 1 rules as hard constraints, which document to
+  read at each step, and a self-check to report; usable as a Claude Code skill.
+- `docs/CLAIM_TO_PATTERN.md`: a per-sample evidence section (Pattern 11 was missing from the map).
 - `README_zh.md`: Chinese overview (method, gallery, install, rule tiers, pattern index); linked from the
   English README.
 - README: install from GitHub (the package is not on PyPI yet), the four spec questions near the top, LaTeX

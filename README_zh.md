@@ -115,6 +115,10 @@ print(structure_strength(x, y, kind="paired"))   # 先检查这种图形能否�
 paired_cloud(ax, x, y, color="#3b7dd8", identity=True)
 ```
 
+### 配合 AI 助手使用
+
+把 [SKILL.md](SKILL.md) 交给 AI 助手即可。这是一个简短的入口文件（英文），写明了工作流程（看数据 → 写规格 → 选模式 → 数值检查 → 画图 → 自查）、不能违反的数据忠实性规则，以及每一步该读哪份文档。它也可以直接作为 Claude Code 的 skill 使用（把仓库复制或软链接到 skills 目录）。
+
 ### 建议阅读顺序
 
 0. **[规则强度](docs/RULE_STRENGTH.md)**：哪些是数据忠实性的硬性要求，哪些是设计默认值，哪些只是某位审稿人的偏好（0.2.1 新增）

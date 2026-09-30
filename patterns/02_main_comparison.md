@@ -50,7 +50,8 @@ Panel (c) of `examples/01_comparison_before_after.py` is this form.
 ### Option B: Table + Supplementary Plot (Most Common Combination)
 The main table appears in the text; the supplementary plot shows:
 - **Rank changes** across datasets -> Bump Chart
-- **Profile** of each method across metrics -> Radar Chart
+- **Profile** of each method across metrics -> Dot plot per metric (small multiples); a radar chart only
+  with the caveats in `techniques/06_radar.md` (its area depends on axis order)
 - **Performance vs. efficiency trade-off** -> Scatter + Pareto
 
 ### Option C: Scatter Plot (Many Methods / Configurations)
@@ -73,15 +74,18 @@ Rows sorted by average rank
 ## Multi-Panel Composition (Common at Top Venues)
 
 ```
-+------------------------+---------------+
-| (a) Main bar chart     | (b) Radar     |
-| 4 datasets x 6 methods | 5 metrics     |
-| with error bars + refs | profile comp. |
-+------------------------+---------------+
++------------------------+------------------------+
+| (a) Dot plot           | (b) Difference plot    |
+| datasets x methods     | ours - best baseline   |
+| mean + interval        | per dataset, with CI,  |
+| (zoomed axis is fine)  | zero line = no gain    |
++------------------------+------------------------+
 | (c) Performance vs. efficiency scatter + Pareto  |
 | x=FLOPs, y=Acc, size=memory                     |
 +--------------------------------------------------+
 ```
+(a) shows where every method sits, (b) shows the quantity the claim is about, (c) shows what it costs.
+`examples/01_comparison_before_after.py` implements (a) + (b).
 
 ## Key Techniques
 
@@ -93,17 +97,27 @@ method_groups = {
     "DL-based": ["GNN", "Transformer", "LSTM"],
     "Ours": ["Ours (small)", "Ours (large)"]
 }
-# Your method always comes last (the last item seen = strongest impression)
+# Keep one fixed order in every figure of the paper (e.g., by category, ours last), stated once.
+# The order is for finding things, not for steering the impression: do not re-sort per panel
+# to put ours in the most flattering position.
 ```
 
-### Statistical Annotations
+### Uncertainty of the Difference (instead of significance stars)
+With 3--5 seeds per method and many method x dataset comparisons, a star from `p < 0.05` says little:
+the test has almost no power, the multiple comparisons are uncorrected, and the star hides how large the
+gain is. Draw the difference and its interval instead (estimation plot, cf. DABEST):
 ```python
-# Mark a star where your method is significantly better than the second-best
-if p_value < 0.05:
-    ax.text(x, y + offset, '*', fontsize=14, ha='center', fontweight='bold')
-if p_value < 0.01:
-    ax.text(x, y + offset, '**', fontsize=14, ha='center', fontweight='bold')
+# per-seed scores, same seeds / splits for both methods where possible
+diff = ours_scores - best_baseline_scores            # paired if seeds are matched
+rng = np.random.default_rng(0)
+boot = [rng.choice(diff, len(diff)).mean() for _ in range(5000)]
+lo, hi = np.percentile(boot, [2.5, 97.5])
+ax.errorbar(diff.mean(), row, xerr=[[diff.mean() - lo], [hi - diff.mean()]], fmt='o')
+ax.axvline(0, color='0.3', lw=0.6)                   # zero = no improvement
 ```
+With only 3--5 seeds a bootstrap interval is itself rough; say so, and show the per-seed differences as
+points. If a reviewer or venue asks for a test, report the test name, n, the correction for multiple
+comparisons, and the effect size, in the caption or a table, not as stars alone.
 
 ### Dual Y-Axis (Displaying Two Metrics Simultaneously)
 Venue-dependent: tolerated in ML/systems hero figures, banned in the APS workflow (see

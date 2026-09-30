@@ -1,16 +1,31 @@
 # Claim-to-Pattern Quick Index
 
 Before creating a figure, identify your claim, then look up the corresponding pattern here.
+Write down what the figure would show if the claim were false ([SPEC_FIRST.md](SPEC_FIRST.md)); the
+recommended form must be able to show that outcome too.
 
 ## Performance / Effectiveness
 
 | What You Want to Say | Pattern | Recommended Visualization |
 |---------------------|---------|--------------------------|
-| "Our method is the best overall" | `02_main_comparison` | Grouped bar + radar + scatter |
-| "We outperform the baseline by X%" | `02_main_comparison` | Grouped bar (annotate delta) |
+| "Our method is the best overall" | `02_main_comparison` | Dot plot (methods x datasets, with intervals) + difference plot |
+| "We outperform the baseline by X%" | `02_main_comparison` | Difference plot: ours − baseline with CI, zero line (Option E) |
 | "Best on all datasets" | `02_main_comparison` | Heatmap matrix / bump chart |
 | "Our method is more robust" | `09_distribution` | Violin + robustness curve |
 | "Lower variance, more stable" | `09_distribution` | Box/violin + CDF |
+
+## Per-Sample Evidence (the claim is about individual samples, rows, states)
+
+| What You Want to Say | Pattern | Recommended Visualization |
+|---------------------|---------|--------------------------|
+| "B changes nothing relative to A, sample by sample" | `11_per_sample_evidence` | Paired cloud on the identity line |
+| "Intervention C removes the effect" | `11_per_sample_evidence` | Paired cloud pinned to the zero line |
+| "We beat the baseline on most samples" | `11_per_sample_evidence` | Error-vs-error cloud + share below the diagonal |
+| "Estimator P is fragile under X, Q is not" | `11_per_sample_evidence` | Overlaid per-sample distributions (wide vs narrow), grid over conditions |
+| "P makes fewer large errors" | `11_per_sample_evidence` | Exceedance curves, log y |
+| "The effect depends on variable z" | `11_per_sample_evidence` | Effect vs z cloud + binned medians |
+
+Only a handful of samples, or no per-sample data: use a dot plot with intervals (`02`) or a table.
 
 ## Efficiency
 
@@ -71,8 +86,8 @@ Before creating a figure, identify your claim, then look up the corresponding pa
 
 **Main Results Figure** (most common combination):
 ```
-Pattern 02 (bar chart) + Pattern 08 (Pareto scatter)
-= Top: absolute performance comparison; Bottom: efficiency trade-off
+Pattern 02 (dot plot + difference plot) + Pattern 08 (Pareto scatter)
+= Top: where each method sits and the gain with its CI; Bottom: what it costs
 ```
 
 **Deep Analysis Figure**:
