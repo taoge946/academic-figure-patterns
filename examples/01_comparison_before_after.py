@@ -2,7 +2,7 @@
 Example 01: Method Comparison — Before vs After
 
 Before: Plain bar chart (undergraduate level)
-After: Multi-panel composition with grouped bars, radar overlay, and ranking strip
+After: Dot plots per dataset (mean ± sd over seeds) + the per-metric gap to the best baseline
 
 CLAIM: "Our method outperforms all baselines across 5 metrics on 2 datasets"
 PATTERN: 02_main_comparison
@@ -44,6 +44,15 @@ data_B = {
     'Transformer': [84.5, 83.1, 82.9, 83.6, 88.0],
     'Ours':        [89.7, 88.4, 87.9, 89.2, 92.8],
 }
+std_B = {
+    'MLP':         [1.4, 1.6, 1.5, 1.5, 1.0],
+    'GNN':         [1.0, 1.2, 1.1, 1.2, 0.8],
+    'Transformer': [1.1, 1.2, 1.1, 1.3, 0.9],
+    'Ours':        [0.6, 0.7, 0.6, 0.5, 0.4],
+}
+N_SEEDS = 5  # the std values above are over 5 seeds
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
 
 
 def plot_before():
@@ -55,114 +64,90 @@ def plot_before():
     ax.set_xticklabels(methods)
     ax.set_ylabel('Accuracy (%)')
     ax.set_title('Comparison Results')
-    fig.savefig('figures/01_before.png', dpi=200, bbox_inches='tight')
+    fig.savefig(os.path.join(FIG_DIR, '01_before.png'), dpi=200, bbox_inches='tight')
     plt.close(fig)
-    print('Saved: figures/01_before.png')
+    print('Saved: examples/figures/01_before.png')
 
 
 def plot_after():
-    """Publication ready: 3-panel composition telling a complete story."""
+    """Two dot-plot panels (one per dataset) + the per-metric gap to the best baseline.
+
+    Dots, not bars: every value lies between 76 and 95, and a bar's length only reads
+    correctly when the axis starts at zero.  Position encodings (dots, intervals) may use a
+    zoomed axis, so the differences stay visible without exaggerating them.  Panel (c)
+    shows the quantity the claim is actually about -- the gap -- against a zero line.
+    """
     TEXTWIDTH, _ = setup_style(venue='icml')
+    pct = r'\%' if plt.rcParams['text.usetex'] else '%'
     colors = get_method_colors(methods)
 
-    fig = plt.figure(figsize=(TEXTWIDTH, TEXTWIDTH * 0.42))
-    gs = gridspec.GridSpec(1, 3, width_ratios=[2.5, 2.5, 2], wspace=0.35)
+    fig = plt.figure(figsize=(TEXTWIDTH, TEXTWIDTH * 0.40))
+    gs = gridspec.GridSpec(1, 3, width_ratios=[2.2, 2.2, 1.6], figure=fig)
 
-    # ──────── Panel (a): Dataset A — Grouped bar with annotations ────────
-    ax1 = fig.add_subplot(gs[0])
     x = np.arange(len(metrics))
-    width = 0.18
-    offsets = np.arange(len(methods)) - (len(methods) - 1) / 2
+    offsets = (np.arange(len(methods)) - (len(methods) - 1) / 2) * 0.16
+    axes = []
+    for k, (name, data, std) in enumerate([('dataset A', data_A, std_A),
+                                           ('dataset B', data_B, std_B)]):
+        ax = fig.add_subplot(gs[k], sharey=axes[0] if axes else None)
+        for i, m in enumerate(methods):
+            ours = m == 'Ours'
+            ax.errorbar(x + offsets[i], data[m], yerr=std[m], fmt='o',
+                        ms=3.2 if ours else 2.4, color=colors[m],
+                        elinewidth=0.7, capsize=0, zorder=4 if ours else 3,
+                        label=m if k == 0 else None)
+        ax.set_xticks(x)
+        ax.set_xticklabels(metrics)
+        ax.set_xlim(-0.5, len(metrics) - 0.5)
+        ax.tick_params(axis='x', which='minor', bottom=False, top=False)
+        ax.text(0.03, 0.97, name, transform=ax.transAxes, va='top', fontsize=7, color='#555555')
+        if k == 0:
+            ax.set_ylabel(f'score ({pct}), mean $\\pm$ sd over {N_SEEDS} seeds'
+                          if plt.rcParams['text.usetex'] else
+                          f'score ({pct}), mean ± sd over {N_SEEDS} seeds')
+        else:
+            plt.setp(ax.get_yticklabels(), visible=False)
+        axes.append(ax)
+    axes[0].set_ylim(74, 96)
+    axes[0].yaxis.set_major_locator(plt.MultipleLocator(5))
+    axes[0].legend(loc='lower right', ncol=2, fontsize=6, handletextpad=0.2,
+                   columnspacing=0.6, borderaxespad=0.2)
 
-    for i, m in enumerate(methods):
-        bars = ax1.bar(x + offsets[i] * width, data_A[m], width * 0.9,
-                       yerr=std_A[m], capsize=1.5,
-                       color=colors[m], edgecolor='white', linewidth=0.3,
-                       error_kw={'lw': 0.5, 'capthick': 0.5},
-                       label=m, alpha=0.9, zorder=3)
+    # (c) the claim is about the gap, so draw the gap
+    ax3 = fig.add_subplot(gs[2])
+    baselines = [m for m in methods if m != 'Ours']
+    for k, (data, std, mk, name) in enumerate([(data_A, std_A, 'o', 'A'),
+                                               (data_B, std_B, 's', 'B')]):
+        best = np.max([data[m] for m in baselines], axis=0)
+        best_sd = np.array([std[max(baselines, key=lambda m: data[m][j])][j]
+                            for j in range(len(metrics))])
+        gap = np.array(data['Ours']) - best
+        sd = np.sqrt(np.array(std['Ours']) ** 2 + best_sd ** 2)
+        ax3.errorbar(gap, np.arange(len(metrics)) + (k - 0.5) * 0.25, xerr=sd, fmt=mk,
+                     ms=2.8, color=COLORS_PRIMARY['ours'], mfc='white' if k else None,
+                     elinewidth=0.7, capsize=0, label=f'dataset {name}')
+    ax3.axvline(0, color='#333333', lw=0.6)
+    ax3.set_yticks(np.arange(len(metrics)))
+    ax3.set_yticklabels(metrics)
+    ax3.tick_params(axis='y', which='minor', left=False, right=False)
+    ax3.invert_yaxis()
+    ax3.set_xlim(-3.5, 8.5)
+    ax3.xaxis.set_major_locator(plt.MultipleLocator(2))
+    ax3.set_xlabel('Ours $-$ best baseline (pp)' if plt.rcParams['text.usetex']
+                   else 'Ours − best baseline (pp)')
+    ax3.legend(loc='lower left', fontsize=6, handletextpad=0.2, borderaxespad=0.2,
+               frameon=True, framealpha=1, edgecolor='none')
 
-    # Reference: random chance
-    ax1.axhline(y=50, ls=':', color='gray', alpha=0.4, lw=0.6)
-    ax1.text(4.5, 50.5, 'Random', fontsize=5, color='gray')
+    for ax, lab in zip(axes + [ax3], 'abc'):
+        ax.text(-0.02, 1.02, f'({lab})', transform=ax.transAxes, ha='right',
+                va='bottom', fontweight='bold', fontsize=9)
 
-    # Shade Ours' performance zone
-    ours_min = min(data_A['Ours']) - max(std_A['Ours'])
-    ours_max = max(data_A['Ours']) + max(std_A['Ours'])
-    ax1.axhspan(ours_min, ours_max, alpha=0.04, color=COLORS_PRIMARY['ours'], zorder=0)
-
-    ax1.set_xticks(x)
-    ax1.set_xticklabels(metrics, fontsize=6.5)
-    ax1.set_ylabel('Score (%)', fontsize=7)
-    ax1.set_ylim(45, 100)
-    ax1.legend(fontsize=5.5, ncol=2, loc='lower right',
-               handlelength=1, columnspacing=0.5)
-    ax1.set_title('Dataset A', fontsize=7.5, pad=3)
-    ax1.text(-0.12, 1.05, '(a)', transform=ax1.transAxes,
-             fontweight='bold', fontsize=9)
-
-    # ──────── Panel (b): Dataset B — same layout for cross-validation ────────
-    ax2 = fig.add_subplot(gs[1])
-
-    for i, m in enumerate(methods):
-        ax2.bar(x + offsets[i] * width, data_B[m], width * 0.9,
-                color=colors[m], edgecolor='white', linewidth=0.3,
-                alpha=0.9, zorder=3)
-
-    ax2.axhline(y=50, ls=':', color='gray', alpha=0.4, lw=0.6)
-
-    # Average gap annotation
-    avg_gap = np.mean(data_B['Ours']) - np.mean(data_B['Transformer'])
-    ax2.annotate(f'Avg. gap\n+{avg_gap:.1f}%',
-                 xy=(2, data_B['Ours'][2]),
-                 xytext=(3.2, 76),
-                 fontsize=6, fontweight='bold',
-                 color=COLORS_PRIMARY['ours'],
-                 arrowprops=dict(arrowstyle='->', color=COLORS_PRIMARY['ours'],
-                                 lw=0.8, connectionstyle='arc3,rad=0.2'))
-
-    ax2.set_xticks(x)
-    ax2.set_xticklabels(metrics, fontsize=6.5)
-    ax2.set_ylim(45, 100)
-    ax2.set_title('Dataset B', fontsize=7.5, pad=3)
-    ax2.text(-0.12, 1.05, '(b)', transform=ax2.transAxes,
-             fontweight='bold', fontsize=9)
-
-    # ──────── Panel (c): Radar — multi-metric profile at a glance ────────
-    ax3 = fig.add_subplot(gs[2], polar=True)
-
-    angles = np.linspace(0, 2 * np.pi, len(metrics), endpoint=False).tolist()
-    angles += angles[:1]  # close the polygon
-
-    for m in methods:
-        vals = data_A[m] + [data_A[m][0]]
-        lw = 1.8 if m == 'Ours' else 0.8
-        alpha = 0.95 if m == 'Ours' else 0.6
-        ax3.plot(angles, vals, '-o', color=colors[m], linewidth=lw,
-                 markersize=2.5 if m == 'Ours' else 1.5, alpha=alpha,
-                 label=m, zorder=10 if m == 'Ours' else 5)
-        if m == 'Ours':
-            ax3.fill(angles, vals, color=colors[m], alpha=0.06)
-
-    ax3.set_xticks(angles[:-1])
-    ax3.set_xticklabels(metrics, fontsize=6)
-    ax3.set_ylim(70, 100)
-    ax3.set_yticks([75, 85, 95])
-    ax3.set_yticklabels(['75', '85', '95'], fontsize=5, color='gray')
-    ax3.set_title('Multi-metric Profile', fontsize=7.5, pad=12)
-    ax3.text(-0.05, 1.12, '(c)', transform=ax3.transAxes,
-             fontweight='bold', fontsize=9)
-
-    # Grid styling
-    ax3.spines['polar'].set_visible(False)
-    ax3.grid(color='gray', alpha=0.2, lw=0.3)
-
-    save_fig(fig, '01_after', formats=['pdf', 'png'])
+    save_fig(fig, '01_after', fig_dir=FIG_DIR, formats=['pdf', 'png'])
 
 
 if __name__ == '__main__':
-    os.makedirs('figures', exist_ok=True)
-    print("=== BEFORE (undergraduate level) ===")
+    os.makedirs(FIG_DIR, exist_ok=True)
+    print("=== BEFORE (default single bar chart) ===")
     plot_before()
-    print("\n=== AFTER (publication ready) ===")
+    print("\n=== AFTER (rules applied) ===")
     plot_after()
-    print("\nCompare figures/01_before.png vs figures/01_after.png")

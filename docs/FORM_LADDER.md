@@ -5,6 +5,11 @@
 > and the spec rules produced first drafts the author accepted. See
 > [CASE_STUDIES_AUTHOR_REVIEW.md](CASE_STUDIES_AUTHOR_REVIEW.md) for the verbatim verdicts.
 
+> **Scope.** This document is Tier 3 in [RULE_STRENGTH.md](RULE_STRENGTH.md): it records what one author
+> accepted and rejected for one physics manuscript, plus three blind runs. It is a strong prior for similar
+> work (many per-sample rows, a claim about their structure), not a universal standard. Where it conflicts
+> with an integrity rule (Tier 1), the integrity rule wins.
+
 ## The one-line criterion
 
 A reader's first-glance judgement is about **information density and structure**: is the panel filled with
@@ -27,7 +32,9 @@ summary json.
 - Per-sample data exists → the main panel must use it; summary quantities become side notes or the smallest panel.
 - Only summaries exist → ask whether the analysis can export per-sample values (in our projects it always could).
   Only if it truly cannot, draw points with intervals, and make that the smallest panel.
-- **A summary-only main panel is rejected with near certainty.**
+- In the reviews recorded here, **every summary-only main panel was rejected**. Expect the same from
+  reviewers who can see that per-sample data exist; a venue or field where point-and-interval panels are the
+  norm may not share this preference.
 
 ## Step 2: the ladder (try from the top, use the highest level that holds)
 
@@ -54,7 +61,8 @@ valid at the same level. "You seem to love scatter clouds — path dependence?" 
 
 ### The load-bearing test (run it before drawing)
 
-Compute, do not eyeball:
+This test asks whether a **form** carries the claim, not whether a **result** deserves to be shown. Compute,
+do not eyeball:
 
 | Form | Passes when |
 |---|---|
@@ -64,8 +72,17 @@ Compute, do not eyeball:
 | Two overlaid distributions | width ratio visibly ≠ 1 (≥ 2×), or a mean shift > 1 sd |
 | Exceedance / ECDF pair | curves separate by a visible factor over a range, not only at one quantile |
 
-A panel that fails is "structure-shaped" and gets deleted, however pretty. We kept a mechanism cloud with
-r ≈ 0.25 once; it was the first thing the author cut.
+A form that fails is "structure-shaped": the reader is told to look for a shape that is not there. Replace
+the form (a simpler plot, a distribution, a table row), not the result. We kept a mechanism cloud with
+r ≈ 0.25 once; it was the first thing the author cut, and the claim moved to the table.
+
+The thresholds are conventions calibrated on those figures, not statistical tests. Two consequences:
+
+- A weak, null or mixed result is still a result. If it matters to the paper, report it, with its
+  uncertainty, in whatever form shows it honestly.
+- A paired cloud whose *off-diagonal* shape is the claim (e.g., error-vs-error clouds where the claim is the
+  share of samples below the diagonal, `examples/11d_*`) is judged by that share and its uncertainty, not
+  by the correlation.
 
 Axes carry only quantities a reader can name (cell count, property value, anchor value), never composite
 distances like ‖c_reuse − c_clean‖₁. Derived quantities beyond "archived column differences, binned medians,

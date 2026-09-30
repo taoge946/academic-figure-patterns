@@ -49,7 +49,13 @@ Scripts for both columns are in `examples/` (`before_<id>.py` and `<id>_*.py`); 
 | ![](examples/figures/12c_before.png) | ![](examples/figures/12c_after.png) |
 | Grouped bars of a mean metric. | **Systems sweep.** Per-device metric with the gap filled; cost against input size with the ratio and its band on a twin axis and the baseline's limit as a wall. Heavy lines and large type for a column that will be shrunk. |
 
-The earlier ML-style pairs from 0.1 (`examples/figures/01–03_*.png`) are still in `examples/`.
+The earlier ML-style pairs from 0.1 (`examples/figures/01–03_*.png`) are still in `examples/`; in 0.2.1 they were
+redrawn so they follow the repository's own integrity rules (dot plots instead of truncated bars, no invented
+"crossover", log-scale speedups).
+
+> **Read the before column as a teaching contrast, not a benchmark.** The "before" figures are deliberately
+> minimal. They show what the rules add; they do not show that the "after" forms beat a careful simple
+> figure, which is sometimes the better choice.
 
 ## What This Is (and Isn't)
 
@@ -60,9 +66,9 @@ The earlier ML-style pairs from 0.1 (`examples/figures/01–03_*.png`) are still
 | **Academic Figure Patterns** | **What to put IN the figure** | — |
 
 AFP answers questions like:
-- *"I have comparison results. How do I make the figure convincing?"*
-- *"What elements do NeurIPS papers include in ablation figures?"*
-- *"How do I make readers see our advantage in 2 seconds?"*
+- *"I have comparison results. What should the main panel actually compare?"*
+- *"What would this figure look like if our claim were false — and can the reader tell?"*
+- *"Should this be a per-sample figure, a simple dot plot, or a table?"*
 
 ## Quick Start
 
@@ -90,6 +96,7 @@ colors = get_method_colors(['GNN', 'Transformer', 'Ours'])
 
 The real value is in the pattern library. Start here:
 
+0. **[How Strong Is Each Rule?](docs/RULE_STRENGTH.md)** — integrity requirements vs design defaults vs one reviewer's preferences (new in 0.2.1)
 1. **[Spec First](docs/SPEC_FIRST.md)** — write the four-question spec per panel *before* plotting (new in 0.2)
 2. **[Form Ladder](docs/FORM_LADDER.md)** — what reviewers mean by "cheap", and the five-level ladder from summary panels to per-sample evidence (new in 0.2)
 3. **[Claim → Pattern Map](docs/CLAIM_TO_PATTERN.md)** — "I want to show X" → read pattern Y
@@ -116,33 +123,36 @@ README; scripts and notes in [examples/README_pattern11.md](examples/README_patt
 
 Every figure starts with a **claim** — the one-sentence conclusion the reader should draw.
 
-| ❌ Bad claim | ✅ Good claim |
-|---|---|
-| "Training curves" | "Our method converges 3× faster than baselines" |
-| "Comparison results" | "Our method outperforms all baselines by 4.2% average" |
-| "Ablation study" | "Attention contributes 47% of improvement; removing it causes failure" |
+| ❌ Bad claim | ✅ Good claim | If the claim were false, the figure would show… |
+|---|---|---|
+| "Training curves" | "Our method converges 3× faster than baselines" | curves reaching the target loss at the same step |
+| "Comparison results" | "Our method outperforms all baselines by 4.2% average" | a difference interval that crosses zero |
+| "Ablation study" | "Attention contributes 47% of improvement; removing it causes failure" | a small attention step, and no drop when it is removed |
 
-The claim determines which **pattern** to use, which determines the figure's structure.
+The claim determines which **pattern** to use, which determines the figure's structure. A good claim is
+*testable*: the third column must be something the figure could actually show. Decide the claim from the
+results; the figure's job is to let the reader check it, not to make it look bigger.
 
 ## The Pattern Library
 
 ### 11 Design Patterns
 
-Each pattern documents the visual structure, required elements, and code template for a common figure type:
+Each pattern documents the visual structure, the elements the comparison needs, and a code template for a
+common figure type. The elements are there for a reason each; they are not a count to reach.
 
-| # | Pattern | When to use | Min. elements |
-|---|---------|------------|:---:|
-| 01 | [Hero Figure](patterns/01_hero_figure.md) | Paper's "elevator pitch" (Fig 1) | 8 |
-| 02 | [Main Comparison](patterns/02_main_comparison.md) | "We beat baselines" | 8 |
-| 03 | [Ablation Study](patterns/03_ablation.md) | "Each component matters" | 7 |
-| 04 | [Scaling Analysis](patterns/04_scaling.md) | "We scale better" | 7 |
-| 05 | [Training Dynamics](patterns/05_training_dynamics.md) | "We converge faster" | 7 |
-| 06 | [Qualitative Results](patterns/06_qualitative.md) | Visual output comparison | 6 |
-| 07 | [Analysis & Insight](patterns/07_analysis.md) | "Here's why it works" | 6 |
-| 08 | [Pareto Tradeoff](patterns/08_pareto_tradeoff.md) | Efficiency vs performance | 7 |
-| 09 | [Distribution Analysis](patterns/09_distribution.md) | Statistical robustness | 6 |
-| 10 | [Quantum Hardware](patterns/10_quantum_hardware.md) | Quantum device results | 7 |
-| 11 | [Per-Sample Evidence](patterns/11_per_sample_evidence.md) | "The effect is in the data, row by row" — paired clouds, distribution grids, exceedance curves | 6 |
+| # | Pattern | When to use |
+|---|---------|------------|
+| 01 | [Hero Figure](patterns/01_hero_figure.md) | Paper's "elevator pitch" (Fig 1) |
+| 02 | [Main Comparison](patterns/02_main_comparison.md) | "We beat baselines" — dot plot or difference plot; bars only from zero |
+| 03 | [Ablation Study](patterns/03_ablation.md) | "Each component matters" |
+| 04 | [Scaling Analysis](patterns/04_scaling.md) | "We scale better" |
+| 05 | [Training Dynamics](patterns/05_training_dynamics.md) | "We converge faster" |
+| 06 | [Qualitative Results](patterns/06_qualitative.md) | Visual output comparison |
+| 07 | [Analysis & Insight](patterns/07_analysis.md) | "Here's why it works" |
+| 08 | [Pareto Tradeoff](patterns/08_pareto_tradeoff.md) | Efficiency vs performance |
+| 09 | [Distribution Analysis](patterns/09_distribution.md) | Statistical robustness |
+| 10 | [Quantum Hardware](patterns/10_quantum_hardware.md) | Quantum device results |
+| 11 | [Per-Sample Evidence](patterns/11_per_sample_evidence.md) | "The effect is in the data, row by row" — paired clouds, distribution grids, exceedance curves |
 
 ### 14 Visualization Techniques
 
@@ -184,9 +194,11 @@ Narrative strategies extracted from NeurIPS/ICML best papers:
 
 ## The "2-Second Test"
 
-A good figure passes this test: **cover all text, look at only shapes and colors for 2 seconds.** Can you tell who wins? If not, the figure fails.
+A good figure passes this test: **cover all text, look at only shapes and colors for 2 seconds.** Can you tell
+what the comparison shows — including when the answer is "no difference" or "it depends"? If not, the
+figure fails. The test is about legibility, not about making one method look like the winner.
 
-Visual storytelling tools (use ≥3 per figure):
+Visual storytelling tools (use the ones your comparison needs):
 - **Color contrast**: Your method = prominent red/orange; baselines = muted blues/grays
 - **Sorting**: Arrange from worst to best; your method appears rightmost
 - **Shaded band**: Show baseline performance range as gray band; your point clearly above
@@ -199,16 +211,24 @@ Things that instantly mark your figure as amateur:
 
 | # | Anti-Pattern | Fix |
 |---|-------------|-----|
-| AP-01 | Bare minimum (just 3 bars) | Add error bars + reference line + annotation (≥6 elements) |
+| AP-01 | Bare minimum (just 3 bars) | Add what the comparison needs: intervals, a null reference, per-sample data where it exists |
 | AP-02 | No context (only your method) | Add ≥3 baselines + ≥2 datasets |
-| AP-03 | Only plt.bar/plot/scatter | Use waterfall, violin, Pareto, ridge, etc. |
+| AP-03 | Form doesn't match the question | Pick the form for the question (a plain dot plot is often right) |
 | AP-04 | Silent figure (no story) | One claim per figure + annotate key finding |
+| AP-05 | Truncated bar axis | Bars start at 0; for narrow ranges use dots or a difference plot |
 | AP-11 | Wrong scale (linear for 3 orders) | Log-log for power laws; semi-log for exponentials |
 | AP-12 | Single panel syndrome | Add test panel, different dataset, or different metric |
 | AP-13 | No reference lines | Add random chance / human / SOTA / theoretical bound |
 | AP-14 | Caption describes, not concludes | First sentence = takeaway, not "Figure X shows..." |
 
 See [full anti-pattern list](docs/ANTI_PATTERNS.md) for all 21 with examples; AP-15 to AP-21 come from author review of real manuscripts.
+
+## Tests
+
+```bash
+pip install -e ".[dev]"
+pytest            # evidence helpers, style setup without LaTeX, and every example script
+```
 
 ## Real Paper Case Studies
 
@@ -263,6 +283,21 @@ from afp import (
 | Nature | 7.09" | — |
 | PRL/PRA | 3.375" | — |
 | QST/Quantum | 3.375"/5.50" | — |
+
+## Related Projects and Further Reading
+
+- [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/) (Claus Wilke;
+  [source](https://github.com/clauswilke/dataviz)) — the design reasoning behind most Tier 1 and Tier 2
+  rules here (uncertainty, proportional ink, multi-panel figures, titles and captions).
+- [Scientific Visualization: Python + Matplotlib](https://github.com/rougier/scientific-visualization-book)
+  (Nicolas Rougier) — matplotlib implementation techniques for the forms described here.
+- [DABEST](https://github.com/ACCLAB/DABEST-python) — estimation plots: raw data plus the effect size and its
+  bootstrap CI; a good fit for Pattern 02 difference plots and Pattern 11.
+- [RainCloudPlots](https://github.com/RainCloudPlots/RainCloudPlots) — distributions with raw observations
+  (Pattern 09 / 11).
+
+These projects use different licenses (e.g., non-commercial Creative Commons licenses for book text and
+figures). Link to them; do not copy their text or images into this MIT-licensed repository.
 
 ## Contributing
 

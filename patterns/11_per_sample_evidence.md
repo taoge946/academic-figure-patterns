@@ -26,14 +26,24 @@ level of the individual sample, with the pooled statistic reduced to a side note
 Reading order: object → mechanism → all samples → endpoint. Any layer can be dropped; the endpoint layer is the
 only one that may *not* be the largest panel.
 
-## Required elements (min. 6)
+## Elements (what each is for, not a count to reach)
 1. Per-sample points or per-sample distributions filling the panel (hundreds to thousands of samples).
 2. One reference line that encodes the null: identity `y = x`, zero line, or "unchanged".
-3. Structure that is the conclusion (diagonal, band, slant, width difference) and passes the load-bearing test
-   in [FORM_LADDER.md](../docs/FORM_LADDER.md) before drawing.
+3. Structure that is the conclusion (diagonal, band, slant, width difference), checked numerically before
+   drawing ([FORM_LADDER.md](../docs/FORM_LADDER.md)). If the structure is not there, change the form, not the
+   result: a weak effect is reported in a simpler form or a table.
 4. Sample count per panel, printed in ink grey.
 5. Encoding consistent with the paper's table: condition = color, cohort = marker shape or row, estimator = grey.
 6. Pooled quantities as printed numbers (with source) or in a last, small panel — never as the main panel.
+
+## When not to use
+- The claim is about an aggregate that has no per-sample counterpart (e.g., a single pooled statistic,
+  a benchmark score per model). Use a dot plot with intervals or a table.
+- Only a handful of samples exist (tens, not hundreds). Show every point directly (a strip or dot plot);
+  a "cloud" of 12 points reads as noise.
+- The per-sample structure is weak. Do not force a cloud; show the distribution of the difference or report
+  the pooled value with its interval.
+- Readers need exact values more than shape. A table is better.
 
 ## Anti-patterns specific to this pattern
 - The same cloud repeated with different variables after a rejection (change the layer, not the axes).

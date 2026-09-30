@@ -1,6 +1,8 @@
 # Figure Pre-Submission Checklist
 
 After generating each figure, **verify every item below**. Any FAIL must be addressed before the figure is finalized.
+Items differ in strength: Section E and D are integrity and format requirements; the rest are design
+defaults (see [RULE_STRENGTH.md](RULE_STRENGTH.md)).
 
 ---
 
@@ -8,7 +10,7 @@ After generating each figure, **verify every item below**. Any FAIL must be addr
 
 - [ ] **S1: Four questions answered per panel** -- claim, comparison, encoding, *what the panel looks like if the claim is false*
 - [ ] **S2: Per-sample data located** -- the per-row / per-state / per-session arrays exist and the main panel uses them; pooled statistics are side notes or the smallest, last panel
-- [ ] **S3: Load-bearing test passed numerically** -- paired corr > 0.9, mechanism corr > 0.5 or median rise > IQR width, distribution width ratio ≥ 2 (FORM_LADDER.md)
+- [ ] **S3: Form checked numerically** -- if a structure-based form (paired cloud, mechanism cloud, overlaid distributions) is meant to carry the claim, its structure is actually there (FORM_LADDER.md). If it is not, pick a simpler form or a table; the result itself is still reported
 - [ ] **S4: One encoding table for the whole paper** -- condition = color, platform = shape, size = area, estimator = grey; no borrowed colors
 - [ ] **S5: Spec reviewed and approved** before the first line of plotting code
 - [ ] **S6: One script + one data file per figure**; every number carries its source; no refit or resampling in the script
@@ -34,7 +36,7 @@ After generating each figure, **verify every item below**. Any FAIL must be addr
 ## C. Presentation
 
 - [ ] **C1: Appropriate figure type** -- The figure type matches the data characteristics (refer to the patterns/ directory)
-- [ ] **C2: Beyond basics** -- At least one advanced technique is used (inset zoom / annotation / a chart type beyond plt.bar)
+- [ ] **C2: Simplest sufficient form** -- No simpler chart would answer the question equally well; any advanced technique (inset, broken axis, ridge, radar) earns its place
 - [ ] **C3: Consistent colors** -- The same method has the same color across all figures
 - [ ] **C4: Meaningful colors** -- Color encoding carries semantic meaning, not random assignment
 - [ ] **C5: Colorblind-friendly** -- Does not rely on red-green distinction; uses shape/pattern as auxiliary cues
@@ -50,10 +52,11 @@ After generating each figure, **verify every item below**. Any FAIL must be addr
 
 ## E. Integrity
 
-- [ ] **E1: Honest y-axis** -- If not starting from 0, use a broken axis rather than silent truncation
+- [ ] **E1: Honest axes** -- Bars start at 0; zoomed axes only for position encodings (dots, lines); every broken or log axis is marked
 - [ ] **E2: Fair comparison** -- Baseline hyperparameters are properly tuned, not deliberately handicapped
 - [ ] **E3: Transparent compute cost** -- If you used more resources, the figure reflects this
 - [ ] **E4: Negative results shown** -- Cases where your method underperforms are also displayed
+- [ ] **E5: Annotations true of the data** -- every arrow, "crossover", star and printed gap is computed from the plotted data
 
 ---
 

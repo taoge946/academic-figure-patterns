@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "academic-figure-patterns"
-version = "0.2.0"
+version = "0.2.1"
 description = "Design patterns for publication-quality academic figures. Content-focused guidance backed by analysis of 50+ top-venue papers and field-tested through author review."
 readme = "README.md"
 license = {text = "MIT"}
@@ -47,3 +47,6 @@ Issues = "https://github.com/taoge946/academic-figure-patterns/issues"
 
 [tool.setuptools.packages.find]
 include = ["afp*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

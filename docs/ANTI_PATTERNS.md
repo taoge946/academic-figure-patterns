@@ -10,10 +10,12 @@ When generating figures for academic papers, **never** commit any of the followi
 
 **Reviewer's reaction**: _"This figure tells me nothing I can't read from a table"_
 
-**Fix**: Every figure should include at least 2 of the following 3 elements:
-- Error bars / confidence bands
-- Reference lines (baseline / random / human / theoretical bound)
-- Annotations (best point, key finding, phase boundary)
+**Fix**: Ask what comparison the figure is for, then add what that comparison needs, usually:
+- Error bars / confidence bands (say what they are)
+- A reference line that encodes the null or a bound (baseline / random / human / theoretical)
+- Per-sample data, if the claim is about samples (see AP-15)
+
+Do not count elements. Six annotations on three bars is still three bars (see the 0.2 notes in the README).
 
 ---
 
@@ -35,6 +37,10 @@ When generating figures for academic papers, **never** commit any of the followi
 **Symptom**: Every figure uses only the most basic line plots, bar charts, or scatter plots, with no advanced visualization techniques.
 
 **Reviewer's reaction**: _"This looks like a homework assignment"_
+
+**Caveat (0.2.1)**: the problem is a form that does not match the question, not the use of basic chart
+types. A plain dot plot, line plot or scatter that answers the question beats a radar chart that does not.
+Radar charts in particular distort (area grows with the square of the values and depends on axis order).
 
 **Fix**: Choose figure types that match your data characteristics:
 - Ablation --> Waterfall / Dumbbell, not just bars
@@ -61,13 +67,14 @@ When generating figures for academic papers, **never** commit any of the followi
 
 ## AP-05: Misleading Precision
 
-**Symptom**: Reporting 92.34567% without error bars. Or a bar chart with the y-axis starting at 0 while all values lie between 90-95%, flattening the differences.
+**Symptom**: Reporting 92.34567% without error bars. Or a bar chart whose values all lie between 90-95%, where a zero-based axis flattens the differences and a truncated axis exaggerates them.
 
 **Reviewer's reaction**: _"This is either sloppy or deliberately misleading"_
 
 **Fix**:
 - Report only as many significant digits as justified by your data
-- Set the y-axis range to reveal differences (but don't exaggerate -- use a broken axis instead of truncating)
+- Bars must start at zero. To reveal small differences, switch to dots with intervals (a zoomed axis is fine
+  for position encodings) or plot the difference from a baseline against a zero line
 - Always include error bars, specifying whether they represent std / SEM / 95% CI
 
 ---
@@ -291,7 +298,7 @@ grey gradient, prediction = dashed no-fit line). Use an encoding only where it d
 
 | Issue | Poor Figure | Good Figure |
 |-------|------------|-------------|
-| Information density | 3 bars, done | Grouped bar + error bar + reference line + annotation |
+| Information density | 3 bars, done | The comparison the claim needs: intervals, a null reference, per-sample data where it exists |
 | Comparison | Only shows own method | 6+ baselines with categorical grouping |
 | Ablation | A single table | Waterfall chart showing cumulative contributions |
 | Distribution | mean +/- std | Violin + strip + statistical test |

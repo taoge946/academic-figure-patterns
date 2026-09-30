@@ -50,6 +50,9 @@ bax.legend()
 ```
 
 ## Best Practices
+- **Not for bar charts whose values all sit in a narrow band.** A bar's length is its value; breaking the axis
+  under every bar is truncation with extra steps. For that case use dots with intervals or a difference plot
+  (`patterns/02_main_comparison.md`). Broken axes are for one or two outliers far from the rest.
 - Broken axes are legitimate, but the break must be clearly marked with diagonal lines
 - Do not use this to exaggerate differences -- if differences are inherently small, use inset zoom instead
 - Explain in the caption why a broken axis is used

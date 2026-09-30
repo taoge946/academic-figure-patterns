@@ -54,6 +54,10 @@ def note(ax, x, y, s, ha="left", va="center", size=8, color=INK2, **kw):
 def structure_strength(x, y, kind="paired", nbins=10):
     """Numeric load-bearing test from docs/FORM_LADDER.md.
 
+    Diagnoses whether a *form* (paired cloud, mechanism cloud) will show a visible structure; it does not
+    decide whether a *result* should be reported.  When 'passes' is False, choose another form or a table.
+    The thresholds are conventions calibrated on one set of reviewed figures, not statistical tests.
+
     kind="paired":     passes when |corr| > 0.9 (or the caller argues the non-diagonal shape is the claim).
     kind="mechanism":  passes when |corr| > 0.5 OR the rise of binned medians exceeds the median IQR width.
     Returns a dict with the numbers and a boolean 'passes'.

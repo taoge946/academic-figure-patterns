@@ -35,6 +35,12 @@ Run any script from the repository root with `PYTHONPATH=. python examples/<scri
 
 Both columns are honest plots of the same arrays. The difference is what a reader can conclude in two seconds.
 
+**What this comparison does and does not show.** The "before" column is deliberately minimal (one panel,
+defaults, no intervals), so it is a teaching contrast, not a fair benchmark: it does not show that these forms
+beat a *careful* simple figure. A careful dot plot with intervals is often the right answer, and for some
+claims (a single pooled statistic, a handful of samples) it is the best one. See
+[docs/RULE_STRENGTH.md](../docs/RULE_STRENGTH.md) for which rules are requirements and which are preferences.
+
 ## Forms by venue
 
 | Script | Form (ladder level) | Venue look |

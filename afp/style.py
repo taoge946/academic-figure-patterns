@@ -8,6 +8,8 @@ Usage:
     from afp import setup_style, get_method_colors
     TEXTWIDTH, COLWIDTH = setup_style(venue='icml')
 """
+import shutil
+
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
@@ -43,13 +45,24 @@ VENUE_WIDTHS = {
 
 # tueplots venue mapping
 _TUEPLOTS_BUNDLES = {
-    'neurips': lambda: bundles.neurips2024(),
-    'icml': lambda: bundles.icml2024(),
-    'iclr': lambda: bundles.iclr2024(),
-    'cvpr': lambda: bundles.cvpr2024(),
-    'aaai': lambda: bundles.aaai2024(),
-    'jmlr': lambda: bundles.jmlr2001(),
+    'neurips': 'neurips2024', 'icml': 'icml2024', 'iclr': 'iclr2024',
+    'cvpr': 'cvpr2024', 'aaai': 'aaai2024', 'jmlr': 'jmlr2001',
 }
+
+
+def _tueplots_bundle(venue, usetex):
+    """tueplots rcParams for a venue; passes usetex where the bundle accepts it."""
+    import inspect
+    fn = getattr(bundles, _TUEPLOTS_BUNDLES[venue])
+    if 'usetex' in inspect.signature(fn).parameters:
+        return fn(usetex=usetex)
+    return fn()
+
+
+def latex_available():
+    """True when a LaTeX binary is on PATH (needed for text.usetex=True)."""
+    return shutil.which('latex') is not None
+
 
 # ============================================================
 # Color palettes (colorblind-friendly)
@@ -81,7 +94,7 @@ CMAP_DIVERGING = 'RdBu_r'
 
 
 def setup_style(venue='icml', fontsize=8, use_scienceplots=True,
-                use_tueplots=True):
+                use_tueplots=True, usetex=None):
     """Configure matplotlib for publication-quality figures.
 
     Applies three layers of configuration:
@@ -94,6 +107,8 @@ def setup_style(venue='icml', fontsize=8, use_scienceplots=True,
         fontsize: Base font size in points
         use_scienceplots: Enable SciencePlots academic style
         use_tueplots: Enable tueplots venue-aware configuration
+        usetex: Render text with LaTeX. None (default): on for tueplots venues when a
+            LaTeX installation is found, off otherwise, so the style never requires LaTeX.
 
     Returns:
         (textwidth, colwidth) in inches
@@ -103,9 +118,13 @@ def setup_style(venue='icml', fontsize=8, use_scienceplots=True,
         plt.style.use(['science', 'no-latex'])
 
     # Layer 2: tueplots venue overrides
-    if use_tueplots and HAS_TUEPLOTS and venue in _TUEPLOTS_BUNDLES:
-        bundle = _TUEPLOTS_BUNDLES[venue]()
-        plt.rcParams.update(bundle)
+    use_bundle = use_tueplots and HAS_TUEPLOTS and venue in _TUEPLOTS_BUNDLES
+    if usetex is None:
+        # tueplots bundles want LaTeX; everything else keeps SciencePlots' no-latex
+        usetex = use_bundle and latex_available()
+    if use_bundle:
+        plt.rcParams.update(_tueplots_bundle(venue, usetex))
+    plt.rcParams['text.usetex'] = bool(usetex)
 
     # Layer 3: AFP custom (highest priority)
     textwidth = VENUE_WIDTHS.get(venue, 5.5)

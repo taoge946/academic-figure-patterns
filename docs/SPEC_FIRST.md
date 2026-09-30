@@ -1,7 +1,9 @@
 # Spec First: Write the Figure Before You Plot It
 
-> Field-tested on a physics manuscript over 20+ author-review rounds (Sep 2026). Every figure that skipped
-> this step was rejected at least twice; every figure that went through it was accepted within two rounds.
+> Field-tested on a physics manuscript over 20+ author-review rounds (Sep 2026). In that project, every figure
+> that skipped this step was rejected at least twice; every figure that went through it was accepted within
+> two rounds. One project and one reviewer: the four questions are general, the ban list below is partly
+> venue-specific (see [RULE_STRENGTH.md](RULE_STRENGTH.md)).
 
 The root cause of "homework-looking" figures is **plotting before deciding what the panel compares**.
 Fonts and colors come last. What decides quality is whether every panel is held up by one explicit
@@ -40,7 +42,8 @@ Concept figures (Fig. 1) get a content spec only (which elements), and are drawn
 - matplotlib defaults: style, palette, legend placement.
 - More than one claim per panel.
 - Panels added to fill the page.
-- Twin y-axes.
+- Twin y-axes (APS/physics workflow; tolerated in ML and systems hero figures, see [VENUE_RULES.md](VENUE_RULES.md)).
+- Any encoding that misstates the data: truncated bar axes, unmarked axis breaks, annotations that are not true of the data.
 
 **Stop here and get the spec reviewed.** Do not start plotting until the comparison objects are approved.
 "Just draw it" from a reviewer does not waive the spec; a five-line spec still goes first.

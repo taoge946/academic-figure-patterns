@@ -17,6 +17,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from afp import setup_style, save_fig
 from afp.style import COLORS_PRIMARY, COLOR_POSITIVE, COLOR_NEGATIVE
 
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+
 # ================================================================
 # Data
 # ================================================================
@@ -42,36 +45,33 @@ def plot_before():
     ax.bar(configs, vals)
     ax.set_ylabel('Accuracy (%)')
     ax.set_title('Ablation Study')
-    fig.savefig('figures/02_before.png', dpi=200, bbox_inches='tight')
+    fig.savefig(os.path.join(FIG_DIR, '02_before.png'), dpi=200, bbox_inches='tight')
     plt.close(fig)
-    print('Saved: figures/02_before.png')
+    print('Saved: examples/figures/02_before.png')
 
 
 def plot_after():
     """Waterfall + interaction heatmap."""
     TEXTWIDTH, _ = setup_style(venue='icml')
+    pct = r'\%' if plt.rcParams['text.usetex'] else '%'
 
     fig = plt.figure(figsize=(TEXTWIDTH, TEXTWIDTH * 0.35))
-    gs = gridspec.GridSpec(1, 2, width_ratios=[3, 2], wspace=0.3)
+    gs = gridspec.GridSpec(1, 2, width_ratios=[3, 2], figure=fig)
 
     # ──────── Panel (a): Waterfall ────────
     ax1 = fig.add_subplot(gs[0])
     x = np.arange(len(components))
 
     for i in range(len(components)):
-        if i == 0:
-            # Base bar
-            ax1.bar(x[i], cumulative[i], color='#777777',
-                    edgecolor='white', linewidth=0.5)
+        if i in (0, len(components) - 1):
+            # Base and full model are levels, not lengths: the axis does not start
+            # at zero, so a bar from the frame would misstate them.  Draw a level mark.
+            full = i == len(components) - 1
+            c = COLORS_PRIMARY['ours'] if full else '#555555'
+            ax1.plot([x[i] - 0.4, x[i] + 0.4], [cumulative[i]] * 2, color=c, lw=2.2,
+                     solid_capstyle='butt')
             ax1.text(x[i], cumulative[i] + 0.4, f'{cumulative[i]:.1f}',
-                     ha='center', fontsize=6.5, fontweight='bold')
-        elif i == len(components) - 1:
-            # Full model bar (from 0)
-            ax1.bar(x[i], cumulative[i], color=COLORS_PRIMARY['ours'],
-                    edgecolor='white', linewidth=0.5)
-            ax1.text(x[i], cumulative[i] + 0.4, f'{cumulative[i]:.1f}',
-                     ha='center', fontsize=6.5, fontweight='bold',
-                     color=COLORS_PRIMARY['ours'])
+                     ha='center', fontsize=6.5, fontweight='bold', color=c)
         else:
             # Delta bar (floating)
             d = deltas[i]
@@ -101,9 +101,9 @@ def plot_after():
 
     # Highlight largest contributor
     max_d_idx = np.argmax(deltas[1:-1]) + 1
-    ax1.annotate('Largest\ncontributor',
-                 xy=(x[max_d_idx], cumulative[max_d_idx]),
-                 xytext=(x[max_d_idx] + 1, cumulative[max_d_idx] + 3),
+    ax1.annotate('largest step',
+                 xy=(x[max_d_idx] + 0.4, cumulative[max_d_idx] - deltas[max_d_idx] / 2),
+                 xytext=(x[max_d_idx] + 0.9, cumulative[max_d_idx] - 3.5),
                  fontsize=5.5, color=COLORS_PRIMARY['ours'],
                  arrowprops=dict(arrowstyle='->', color=COLORS_PRIMARY['ours'],
                                  lw=0.7, connectionstyle='arc3,rad=0.15'))
@@ -112,14 +112,15 @@ def plot_after():
     ax1.annotate('', xy=(x[-1] + 0.45, cumulative[-1]),
                  xytext=(x[-1] + 0.45, cumulative[0]),
                  arrowprops=dict(arrowstyle='<->', color='#333', lw=0.8))
-    ax1.text(x[-1] + 0.55, (cumulative[0] + cumulative[-1]) / 2,
-             f'+{cumulative[-1] - cumulative[0]:.1f}%',
+    ax1.text(x[-1] + 0.62, (cumulative[0] + cumulative[-1]) / 2,
+             f'+{cumulative[-1] - cumulative[0]:.1f} pp',
              fontsize=6, fontweight='bold', va='center', color='#333')
 
     ax1.set_xticks(x)
     ax1.set_xticklabels(components, fontsize=5.5, rotation=20, ha='right')
-    ax1.set_ylabel('Accuracy (%)', fontsize=7)
-    ax1.set_ylim(72, 95)
+    ax1.set_ylabel('accuracy (' + pct + ')', fontsize=7)
+    ax1.set_ylim(76, 92)
+    ax1.set_xlim(-0.6, len(components) + 0.1)
     ax1.text(-0.1, 1.05, '(a)', transform=ax1.transAxes,
              fontweight='bold', fontsize=9)
 
@@ -144,17 +145,17 @@ def plot_after():
 
     cbar = fig.colorbar(im, ax=ax2, shrink=0.8, pad=0.02)
     cbar.ax.tick_params(labelsize=5.5)
-    cbar.set_label('Contribution (%)', fontsize=6)
-
-    ax2.set_title('Component Interactions', fontsize=7.5, pad=5)
+    cbar.set_label('gain (pp)', fontsize=6)
+    ax2.text(0.0, 1.02, 'diagonal: gain alone; off-diagonal: joint gain', transform=ax2.transAxes,
+             fontsize=5.5, color='#555555', va='bottom')
     ax2.text(-0.15, 1.05, '(b)', transform=ax2.transAxes,
              fontweight='bold', fontsize=9)
 
-    save_fig(fig, '02_after', formats=['pdf', 'png'])
+    save_fig(fig, '02_after', fig_dir=FIG_DIR, formats=['pdf', 'png'])
 
 
 if __name__ == '__main__':
-    os.makedirs('figures', exist_ok=True)
+    os.makedirs(FIG_DIR, exist_ok=True)
     print("=== BEFORE ===")
     plot_before()
     print("\n=== AFTER ===")

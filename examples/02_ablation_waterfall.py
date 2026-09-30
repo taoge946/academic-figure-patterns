@@ -16,6 +16,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from afp import setup_style, save_fig
 from afp.style import COLORS_PRIMARY, COLOR_POSITIVE, COLOR_NEGATIVE
 
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
+
 # ================================================================
 # Data: ablation components and their contributions
 # ================================================================
@@ -32,10 +35,10 @@ def plot_before():
     ax.bar(labels, all_values)
     ax.set_ylabel('Accuracy (%)')
     ax.set_title('Ablation Study')
-    fig.savefig('figures/02_before.pdf', bbox_inches='tight')
-    fig.savefig('figures/02_before.png', dpi=150, bbox_inches='tight')
+    fig.savefig(os.path.join(FIG_DIR, '02_waterfall_before.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(FIG_DIR, '02_waterfall_before.png'), dpi=150, bbox_inches='tight')
     plt.close(fig)
-    print('Saved: figures/02_before.pdf')
+    print('Saved: examples/figures/02_waterfall_before.pdf')
 
 
 def plot_after():
@@ -60,8 +63,10 @@ def plot_after():
 
     x = np.arange(len(labels))
 
-    # Base bar
-    ax.bar(x[0], base, color='#777777', edgecolor='white', linewidth=0.5)
+    # Base level: a mark, not a bar -- the axis does not start at zero, so a bar
+    # from the frame would misstate its value.  Only the floating steps are lengths.
+    ax.plot([x[0] - 0.4, x[0] + 0.4], [base, base], color='#555555', lw=2.2,
+            solid_capstyle='butt')
     ax.text(x[0], base + 0.3, f'{base:.1f}', ha='center', fontsize=7,
             fontweight='bold')
 
@@ -80,9 +85,9 @@ def plot_after():
                     [cumulative[i + 1], cumulative[i + 1]],
                     color='gray', ls=':', lw=0.5, alpha=0.5)
 
-    # Final total bar
-    ax.bar(x[-1], total, color=COLORS_PRIMARY['ours'],
-           edgecolor='white', linewidth=0.5)
+    # Final level (same reasoning as the base)
+    ax.plot([x[-1] - 0.4, x[-1] + 0.4], [total, total], color=COLORS_PRIMARY['ours'],
+            lw=2.2, solid_capstyle='butt')
     ax.text(x[-1], total + 0.3, f'{total:.1f}', ha='center', fontsize=7,
             fontweight='bold', color=COLORS_PRIMARY['ours'])
 
@@ -97,24 +102,23 @@ def plot_after():
 
     # Highlight largest contributor
     max_idx = np.argmax(deltas)
-    ax.annotate('Largest\ncontributor',
-                xy=(x[max_idx + 1], cumulative[max_idx] + deltas[max_idx]),
-                xytext=(x[max_idx + 1] + 0.8,
-                        cumulative[max_idx] + deltas[max_idx] + 2),
-                fontsize=6, color=COLORS_PRIMARY['ours'],
+    ax.annotate('largest step',
+                xy=(x[max_idx + 1] + 0.4, cumulative[max_idx] + deltas[max_idx] / 2),
+                xytext=(x[max_idx + 1] + 0.9, cumulative[max_idx] + deltas[max_idx] / 2 - 1.5),
+                fontsize=6, color=COLORS_PRIMARY['ours'], va='center',
                 arrowprops=dict(arrowstyle='->', color=COLORS_PRIMARY['ours'],
                                 lw=0.8))
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=7, rotation=15, ha='right')
-    ax.set_ylabel('Accuracy (%)')
-    ax.set_ylim(70, 95)
+    ax.set_ylabel(r'Accuracy (\%)' if plt.rcParams['text.usetex'] else 'Accuracy (%)')
+    ax.set_ylim(76, 92)
 
-    save_fig(fig, '02_after', formats=['pdf', 'png'])
+    save_fig(fig, '02_waterfall_after', fig_dir=FIG_DIR, formats=['pdf', 'png'])
 
 
 if __name__ == '__main__':
-    os.makedirs('figures', exist_ok=True)
+    os.makedirs(FIG_DIR, exist_ok=True)
     print("=== BEFORE (plain bars) ===")
     plot_before()
     print("\n=== AFTER (waterfall chart) ===")

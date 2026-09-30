@@ -13,8 +13,11 @@ import numpy as np
 import os, sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-from afp import setup_style, get_method_colors, save_fig, add_vref_line
+from afp import setup_style, get_method_colors, save_fig
 from afp.style import COLORS_PRIMARY
+
+
+FIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figures')
 
 # ================================================================
 # Synthetic scaling data
@@ -47,14 +50,14 @@ def plot_before():
     ax.set_ylabel('Runtime (s)')
     ax.set_title('Runtime Scaling')
     ax.legend()
-    fig.savefig('figures/03_before.pdf', bbox_inches='tight')
-    fig.savefig('figures/03_before.png', dpi=150, bbox_inches='tight')
+    fig.savefig(os.path.join(FIG_DIR, '03_before.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(FIG_DIR, '03_before.png'), dpi=150, bbox_inches='tight')
     plt.close(fig)
-    print('Saved: figures/03_before.pdf')
+    print('Saved: examples/figures/03_before.pdf')
 
 
 def plot_after():
-    """Log-log with fit lines, crossover annotation, and dual panel."""
+    """Log-log runtimes with slope labels, and the speedup on a log axis with a 1x line."""
     TEXTWIDTH, COLWIDTH = setup_style(venue='icml')
     colors = get_method_colors(methods)
 
@@ -77,14 +80,8 @@ def plot_after():
                      f'$O(n^{{{slope}}})$',
                      fontsize=6, color=colors[name], va='center')
 
-    # Crossover point annotation
-    # Find where Ours becomes faster than Transformer
-    cross_idx = np.argmin(np.abs(ours_time - transformer_time))
-    cross_n = n[cross_idx]
-    ax1.axvline(x=cross_n, ls='--', color='gray', alpha=0.4, lw=0.8)
-    ax1.text(cross_n * 0.6, ax1.get_ylim()[0] * 3,
-             f'Crossover\nn={cross_n}', fontsize=6, color='gray',
-             ha='center')
+    # No crossover annotation: Ours is already faster than every baseline at the
+    # smallest size, so a "crossover" line would mark something that does not happen.
 
     ax1.set_xlabel('Problem Size $n$')
     ax1.set_ylabel('Runtime (s)')
@@ -95,29 +92,29 @@ def plot_after():
     # --- Panel (b): Speedup ratio ---
     for name in ['Transformer', 'GNN', 'MLP']:
         speedup = all_data[name] / ours_time
-        ax2.semilogx(n, speedup, '-o', label=f'vs {name}',
+        ax2.plot(n, speedup, '-o', label=f'vs {name}',
                      color=colors[name], markersize=3, linewidth=1.0)
 
-    ax2.axhline(y=1.0, ls=':', color='gray', alpha=0.5, lw=0.8)
-    ax2.text(n[0] * 0.8, 1.05, 'Equal', fontsize=6, color='gray')
+    # Speedups span three orders of magnitude: a linear axis squashes two of the
+    # three curves onto the floor, so the ratio goes on a log axis with a 1x line.
+    ax2.set_yscale('log')
+    ax2.set_ylim(0.5, 2e3)
+    ax2.axhline(y=1.0, ls=':', color='gray', alpha=0.7, lw=0.8)
+    ax2.text(n[-1], 1.12, '1× (equal)' if not plt.rcParams['text.usetex'] else r'1$\times$ (equal)',
+             fontsize=6, color='gray', ha='right', va='bottom')
 
-    # Shade the "our method is faster" region
-    ax2.axhspan(1.0, ax2.get_ylim()[1] if ax2.get_ylim()[1] > 10 else 60,
-                alpha=0.05, color=COLORS_PRIMARY['ours'])
-    ax2.text(n[-1] * 0.5, 2, 'Ours faster', fontsize=6,
-             color=COLORS_PRIMARY['ours'], alpha=0.7, ha='center')
-
+    ax2.set_xscale('log')
     ax2.set_xlabel('Problem Size $n$')
-    ax2.set_ylabel('Speedup over Ours')
+    ax2.set_ylabel('Speedup of Ours (baseline / ours)')
     ax2.legend(fontsize=6, loc='upper left')
     ax2.text(-0.15, 1.05, '(b)', transform=ax2.transAxes,
              fontweight='bold', fontsize=10)
 
-    save_fig(fig, '03_after', formats=['pdf', 'png'])
+    save_fig(fig, '03_after', fig_dir=FIG_DIR, formats=['pdf', 'png'])
 
 
 if __name__ == '__main__':
-    os.makedirs('figures', exist_ok=True)
+    os.makedirs(FIG_DIR, exist_ok=True)
     print("=== BEFORE (linear scale) ===")
     plot_before()
     print("\n=== AFTER (log-log with annotations) ===")

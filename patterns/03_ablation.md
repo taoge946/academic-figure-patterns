@@ -38,6 +38,14 @@ Visual:
 - A plain bar chart shows only final values, hiding the order of contributions
 - A waterfall chart reveals the cumulative process, making each component's contribution immediately visible
 
+**Caveats (0.2.1)**:
+- Step sizes depend on the order components were added. With interactions, "+5.2 from attention" is only
+  true for that order. If you claim a component's contribution, also show leave-one-out (full model minus
+  that component, Option B/C) or state the order is fixed by design.
+- Only the floating steps are lengths. If the axis does not start at zero, draw the base and final values
+  as level marks, not bars from the frame (`examples/02_ablation_waterfall.py`).
+- Each step should carry its run-to-run spread; a +0.3 step inside a ±0.5 spread is not a contribution.
+
 ### Option B: Grouped Bar + Arrow (Showing With/Without Differences)
 ```
 Each group has two bars: with component / without component

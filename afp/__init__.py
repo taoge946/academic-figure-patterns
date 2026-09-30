@@ -50,7 +50,7 @@ from afp.evidence import (
     fraction_below_diagonal,
 )
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __all__ = [
     # Style
     "setup_style", "get_figsize", "get_method_colors",

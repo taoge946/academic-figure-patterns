@@ -33,6 +33,9 @@ Thank you for your interest in contributing! This project thrives on community c
 - Write in English
 - Include working matplotlib code (test it!)
 - Reference real papers when possible
+- Say how strong a new rule is (integrity requirement, design default, or reviewer preference; see
+  `docs/RULE_STRENGTH.md`) and when it does not apply
+- Link to other projects' material; do not copy text or images whose license differs from MIT
 - Keep documentation concise and actionable
 
 ## Development Setup
@@ -41,7 +44,8 @@ Thank you for your interest in contributing! This project thrives on community c
 git clone https://github.com/taoge946/academic-figure-patterns.git
 cd academic-figure-patterns
 pip install -e ".[dev]"
-python examples/01_comparison_before_after.py  # verify setup
+pytest                                          # runs the helper tests and every example script
+python examples/01_comparison_before_after.py  # writes examples/figures/01_*.png (LaTeX optional)
 ```
 
 ## Code of Conduct

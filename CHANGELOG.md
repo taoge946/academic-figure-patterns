@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.2.1 — 2026-09-30
+
+A rule review. Some advice was stronger than its evidence, and one piece broke an integrity rule.
+
+### Fixed
+- **Pattern 02 no longer recommends truncating a bar chart's y-axis** ("values 85–95 → start at 83"). Bars
+  start at zero; narrow ranges use a dot plot or a difference plot (new Options A and E). AP-05, CHECKLIST E1
+  and the broken-axis technique now say the same thing.
+- `setup_style()` crashed on machines without LaTeX (tueplots bundles default to `usetex=True`). It now
+  enables LaTeX only when it is installed; `usetex=` overrides.
+- Examples 01–03 wrote to `./figures/` and needed LaTeX; they now write to `examples/figures/` from any
+  working directory. Their "after" figures were redrawn: 01 uses dot plots per dataset plus the gap to the
+  best baseline (was: bars truncated at 45, a radar chart with its radius starting at 70, a `%` swallowed by
+  LaTeX); 02 draws base/final as level marks instead of bars from a truncated frame; 03 drops a "crossover"
+  line where nothing crosses and puts the speedup on a log axis. The waterfall script no longer overwrites
+  `02_*.png`.
+
+### Changed
+- New `docs/RULE_STRENGTH.md`: integrity requirements vs design defaults vs one reviewer's preferences.
+  FORM_LADDER, SPEC_FIRST and CHECKLIST point to it and state their scope.
+- The load-bearing test is a diagnostic for a *form*, not a gate on reporting a *result*; weak or null
+  results are reported in a simpler form or a table (FORM_LADDER, CHECKLIST S3, `structure_strength` docstring).
+- README: minimum-element counts removed from the pattern table and AP-01; the 2-second test asks what the
+  comparison shows rather than "who wins"; claims come with their counterfactual; "before" figures are
+  labelled a teaching contrast, not a benchmark; related projects listed with a license note.
+- Pattern 02, 11: "when not to use" sections. Pattern 03: order dependence and spread of waterfall steps.
+  Checklist C2 is now "simplest sufficient form"; E5 "annotations true of the data" added.
+
+### Added
+- `tests/`: numeric tests for `afp.evidence`, style setup without LaTeX, every example script run headless,
+  and the synthetic data behind the example figures compared with the committed `.npz` files.
+- GitHub Actions workflow running the tests.
+
 ## 0.2.0 — 2026-09-16
 
 The March release was distilled from published top-venue papers. This release adds what six months of
